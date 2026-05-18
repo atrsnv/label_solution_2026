@@ -1,0 +1,454 @@
+@use '../../styles/variables' as *;
+
+.admin-artists {
+  flex: 1;
+  width: 100%;
+  max-width: $container-width;
+  margin: 0 auto;
+  padding-top: 42px;
+  display: flex;
+  color: $white;
+  font-family: $font-main;
+  box-sizing: border-box;
+
+  &__panel {
+    flex: 1;
+    width: 100%;
+    padding: 24px 28px 34px;
+    border-radius: $radius-md $radius-md 0 0;
+    background: rgba(255, 255, 255, 0.035);
+    box-sizing: border-box;
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-md;
+    margin-bottom: 16px;
+  }
+
+  &__top-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  h1 {
+    margin: 0;
+    color: $white;
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    font-family: $font-secondary;
+  }
+
+  &__add-button {
+    min-width: 150px;
+    padding: 7px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.03);
+    color: $white;
+    font-size: 14px;
+    font-family: $font-third;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.25s ease;
+
+    &:hover {
+      background: $white-opacity-20;
+    }
+  }
+
+  &__message {
+    margin: 28px 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 14px;
+    font-family: $font-third;
+  }
+
+  &__table-wrapper {
+    position: relative;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    font-family: $font-third;
+  }
+
+  th,
+  td {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  th {
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 400;
+  }
+
+  td {
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 400;
+  }
+
+  &__empty {
+    padding: 28px 0;
+    color: rgba(255, 255, 255, 0.55);
+    text-align: center;
+  }
+
+    &__row {
+      cursor: pointer;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.025);
+      }
+
+      &--active {
+        background: rgba(255, 255, 255, 0.035);
+      }
+    }
+
+  &__modal-field {
+    input {
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+      }
+    }
+  }
+
+  &__artist {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__avatar {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 30px;
+    border-radius: 50%;
+    background:
+      linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.22),
+        rgba(255, 255, 255, 0.04)
+      ),
+      $dark-gray;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: $white;
+    font-size: 0.7rem;
+    font-weight: 800;
+  }
+
+  &__status {
+    font-weight: 700;
+
+    &--active {
+      color: #77e687;
+    }
+
+    &--inactive {
+      color: #ff5f5f;
+    }
+  }
+
+  &__percent-popup {
+    position: fixed;
+    z-index: 50;
+    min-width: 285px;
+    padding: 13px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-md;
+    border-radius: $radius-md;
+    background: #202124;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.75rem;
+
+    span {
+      white-space: nowrap;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: $white;
+      font-weight: 700;
+    }
+
+    input {
+      width: 42px;
+      padding: 2px 4px;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: $white;
+      font: inherit;
+      font-weight: 700;
+      text-align: right;
+
+      &:disabled {
+        cursor: wait;
+        opacity: 0.6;
+      }
+
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        margin: 0;
+        appearance: none;
+      }
+    }
+  }
+
+  &__modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.56);
+    backdrop-filter: blur(8px);
+    box-sizing: border-box;
+  }
+
+  &__modal {
+    width: min(520px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    padding: 24px;
+    border-radius: $radius-md;
+    background: #202124;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+    box-sizing: border-box;
+  }
+
+  &__modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-md;
+    margin-bottom: 20px;
+
+    h2 {
+      margin: 0;
+      color: $white;
+      font-size: 20px;
+      font-family: $font-secondary;
+      font-weight: 600;
+    }
+  }
+
+  &__modal-close {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: transparent;
+    color: $white;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    transition: 0.25s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  &__modal-field {
+    display: block;
+    margin-bottom: 14px;
+
+    span {
+      display: block;
+      margin-bottom: 7px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 13px;
+      font-family: $font-third;
+    }
+
+    input {
+      width: 100%;
+      height: 38px;
+      padding: 0 14px;
+      border-radius: $radius-sm;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.035);
+      color: $white;
+      outline: none;
+      font-family: $font-main;
+      font-size: 14px;
+      box-sizing: border-box;
+      transition: 0.25s ease;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.28);
+      }
+
+      &:focus {
+        border-color: rgba(255, 255, 255, 0.78);
+        box-shadow: 0 0 14px rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  &__modal-hint {
+    margin: -2px 0 14px;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 12px;
+    line-height: 1.45;
+    font-family: $font-third;
+  }
+
+  &__modal-error {
+    margin: 10px 0 0;
+    color: #ff6b6b;
+    font-size: 13px;
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  &__modal-actions {
+    margin-top: 22px;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+
+    button {
+      min-width: 120px;
+      height: 36px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.03);
+      color: $white;
+      font-size: 14px;
+      font-family: $font-third;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.25s ease;
+
+      &:hover:not(:disabled) {
+        background: $white-opacity-20;
+        box-shadow: $btn-shadow;
+      }
+
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+      }
+    }
+  }
+
+  &__invite-result {
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: $radius-sm;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    > span {
+      display: block;
+      margin: 0 0 6px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 12px;
+      font-family: $font-third;
+    }
+
+    code {
+      width: 100%;
+      display: block;
+      margin-bottom: 12px;
+      padding: 9px 10px;
+      border-radius: $radius-sm;
+      background: rgba(0, 0, 0, 0.24);
+      color: #ffbd4a;
+      font-size: 12px;
+      line-height: 1.35;
+      word-break: break-all;
+      box-sizing: border-box;
+    }
+
+    p {
+      margin: 0 0 12px;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+  }
+
+  &__copy-button {
+    min-width: 170px;
+    height: 34px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.03);
+    color: $white;
+    font-size: 13px;
+    font-family: $font-third;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.25s ease;
+
+    &:hover {
+      background: $white-opacity-20;
+      box-shadow: $btn-shadow;
+    }
+  }
+
+  &__copy-message {
+    margin: 10px 0 0 !important;
+    color: #77e687 !important;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-artists {
+    padding-top: 32px;
+
+    &__panel {
+      overflow-x: auto;
+    }
+
+    &__top {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    &__top-actions {
+      flex-wrap: wrap;
+    }
+
+    table {
+      min-width: 850px;
+    }
+
+    &__percent-popup {
+      left: 50% !important;
+      top: 120px !important;
+      transform: translateX(-50%);
+    }
+  }
+}
