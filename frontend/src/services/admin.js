@@ -2,6 +2,7 @@ import api from './api';
 
 export const adminApi = {
   dashboardSummary: () => api.get('/admin/dashboard/summary').then((r) => r.data),
+  analytics: () => api.get('/admin/analytics').then((r) => r.data),
 
   listArtists: () => api.get('/admin/artists').then((r) => r.data),
   getArtist: (id) => api.get(`/admin/artists/${id}`).then((r) => r.data),

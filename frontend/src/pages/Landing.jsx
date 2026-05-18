@@ -104,11 +104,11 @@ export default function Landing() {
       </section>
 
       <section className="features" id="artists">
-        <Feature
-          icon={<RiseOutlined />}
-          title="Аналитика DataLens"
-          text="Встроенные дашборды Yandex DataLens: общий по лейблу и персональный по артисту — фильтры, графики, география слушателей."
-        />
+          <Feature
+            icon={<RiseOutlined />}
+            title="Аналитика DataLens"
+            text="Общий аналитический контур DataLens и красивые ERP-витрины: сводки лейбла, личные графики артистов, начисления и динамика дохода."
+          />
         <Feature
           icon={<TeamOutlined />}
           title="Сплиты с фитами"

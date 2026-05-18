@@ -10,6 +10,7 @@ router.use(isAuth, isAdmin);
 
 // Dashboard
 router.get('/dashboard/summary', admin.dashboardSummary);
+router.get('/analytics', admin.analytics);
 
 // Artists
 router.get('/artists', admin.listArtists);
