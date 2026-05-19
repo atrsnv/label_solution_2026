@@ -23,6 +23,9 @@ export interface AdminArtist {
   labelShare: number;
   balance: number;
   createdAt?: string;
+  source?: string;
+  hasAccount?: boolean;
+  datalensArtistId?: string | null;
   _count?: {
     ownedTracks: number;
   };
@@ -36,6 +39,8 @@ export interface AdminTrack {
   status: TrackStatus;
   labelShare: number;
   createdAt: string;
+  source?: string;
+  datalensTrackId?: string | null;
   owner: {
     id: string;
     name: string;

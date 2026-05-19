@@ -2,7 +2,10 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 const {
   buildArtistDatalensDashboard,
+  buildArtistDatalensTrackRegistry,
   buildAdminDatalensDashboard,
+  buildDatalensArtistRegistry,
+  buildDatalensTrackRegistry,
   parseDatalensCsv,
 } = require('../src/utils/datalensDashboard');
 
@@ -56,4 +59,58 @@ test('buildArtistDatalensDashboard filters rows by mapped DataLens artist id', (
   assert.deepEqual(dashboard.byTrack, [
     { trackId: 'TRK-2', trackTitle: 'Other', amount: 140 },
   ]);
+});
+
+test('buildDatalensArtistRegistry includes artists that only exist in DataLens', () => {
+  const rows = parseDatalensCsv([
+    'transaction_id,date,track_id,track_title,artist_id,artist_name,role,income_type,source,revenue_gross,revenue_net,streams',
+    'TX-1,2026-03-01,TRK-1,Song,ART-1,Artist One,Автор,Стриминг,Яндекс Музыка,100,70,1000',
+  ].join('\n'));
+
+  const artists = buildDatalensArtistRegistry(rows, [], {});
+
+  assert.equal(artists[0].name, 'Artist One');
+  assert.equal(artists[0].source, 'DataLens');
+  assert.equal(artists[0].hasAccount, false);
+  assert.equal(artists[0]._count.ownedTracks, 1);
+});
+
+test('buildDatalensTrackRegistry merges DataLens tracks with local overlay', () => {
+  const rows = parseDatalensCsv([
+    'transaction_id,date,track_id,track_title,artist_id,artist_name,role,income_type,source,revenue_gross,revenue_net,streams',
+    'TX-1,2026-03-01,TRK-1,Song,ART-1,Artist One,Автор,Стриминг,Яндекс Музыка,100,70,1000',
+  ].join('\n'));
+  const localTrack = {
+    id: 'local-track',
+    title: 'Song',
+    createdAt: new Date('2026-02-01'),
+    releaseDate: new Date('2026-02-01'),
+    status: 'PENDING',
+    labelShare: 25,
+    owner: { id: 'user-1', name: 'Local Artist', email: 'artist@label.local' },
+    splits: [],
+  };
+
+  const tracks = buildDatalensTrackRegistry(rows, [localTrack]);
+
+  assert.equal(tracks[0].id, 'local-track');
+  assert.equal(tracks[0].source, 'ERP + DataLens');
+  assert.equal(tracks[0].status, 'PENDING');
+});
+
+test('buildArtistDatalensTrackRegistry shows mapped DataLens releases', () => {
+  const rows = parseDatalensCsv([
+    'transaction_id,date,track_id,track_title,artist_id,artist_name,role,income_type,source,revenue_gross,revenue_net,streams',
+    'TX-1,2026-03-01,TRK-1,Song,ART-1,Artist One,Автор,Стриминг,Яндекс Музыка,100,70,1000',
+  ].join('\n'));
+
+  const tracks = buildArtistDatalensTrackRegistry(
+    rows,
+    { id: 'user-1', email: 'local@label.local', name: 'Local Artist' },
+    { 'local@label.local': 'ART-1' },
+    [],
+  );
+
+  assert.equal(tracks[0].title, 'Song');
+  assert.equal(tracks[0].source, 'DataLens');
 });

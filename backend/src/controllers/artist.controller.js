@@ -4,6 +4,7 @@ const prisma = require('../config/prisma');
 const config = require('../config');
 const { parseArtistIdMap } = require('../utils/datalens');
 const {
+  buildArtistDatalensTrackRegistry,
   buildArtistDatalensDashboard,
   parseDatalensCsv,
 } = require('../utils/datalensDashboard');
@@ -58,14 +59,22 @@ async function analytics(req, res, next) {
 // GET /api/artist/tracks  — треки, где артист владелец
 async function myTracks(req, res, next) {
   try {
-    const tracks = await prisma.track.findMany({
-      where: { ownerId: req.user.id },
+    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+    const localTracks = await prisma.track.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
+        owner: { select: { id: true, name: true, email: true } },
         splits: { include: { user: { select: { id: true, name: true, email: true } } } },
       },
     });
-    res.json({ tracks });
+    res.json({
+      tracks: buildArtistDatalensTrackRegistry(
+        loadDatalensRows(),
+        user,
+        parseArtistIdMap(config.datalens.artistIdMap),
+        localTracks,
+      ),
+    });
   } catch (e) { next(e); }
 }
 

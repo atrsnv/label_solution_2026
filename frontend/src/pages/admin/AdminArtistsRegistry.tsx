@@ -6,7 +6,7 @@ import { adminService, type AdminArtist } from '../../services/adminService';
 
 import './AdminArtistsRegistry.scss';
 
-type ArtistStatus = 'Активен' | 'Деактивен';
+type ArtistStatus = 'Активен' | 'Нет аккаунта';
 
 type Artist = {
   id: string;
@@ -16,6 +16,8 @@ type Artist = {
   percent: string;
   status: ArtistStatus;
   avatar: string;
+  source: string;
+  hasAccount: boolean;
 };
 
 type CreateArtistForm = {
@@ -77,8 +79,10 @@ const mapArtistFromApi = (artist: AdminArtist): Artist => ({
   email: artist.email,
   releases: artist._count?.ownedTracks ?? 0,
   percent: String(artist.labelShare),
-  status: 'Активен',
+  status: artist.hasAccount === false ? 'Нет аккаунта' : 'Активен',
   avatar: getArtistAvatar(artist.name),
+  source: artist.source || 'ERP',
+  hasAccount: artist.hasAccount !== false,
 });
 
 const buildInviteUrl = (invite: CreatedInvite) => {
@@ -382,6 +386,7 @@ const AdminArtistsRegistry = () => {
     const target = event.target as HTMLElement;
 
     if (target.closest('button')) return;
+    if (!artist.hasAccount) return;
 
     openEditArtistModal(artist);
   };
@@ -449,6 +454,7 @@ const AdminArtistsRegistry = () => {
                 <th>Электронная почта</th>
                 <th>Количество релизов</th>
                 <th>Базовый процент</th>
+                <th>Источник</th>
                 <th>Статус</th>
               </tr>
             </thead>
@@ -477,6 +483,7 @@ const AdminArtistsRegistry = () => {
                     <td>{artist.email}</td>
                     <td>{artist.releases}</td>
                     <td>{artist.percent}%</td>
+                    <td>{artist.source}</td>
 
                     <td>
                       <span
@@ -493,7 +500,7 @@ const AdminArtistsRegistry = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="admin-artists__empty">
+                  <td colSpan={6} className="admin-artists__empty">
                     Артисты пока не добавлены
                   </td>
                 </tr>

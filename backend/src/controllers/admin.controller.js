@@ -7,8 +7,21 @@ const config = require('../config');
 const { addAmount, roundMoney } = require('../utils/analytics');
 const {
   buildAdminDatalensDashboard,
+  buildDatalensArtistRegistry,
+  buildDatalensTrackRegistry,
   parseDatalensCsv,
 } = require('../utils/datalensDashboard');
+const { parseArtistIdMap } = require('../utils/datalens');
+
+function loadDatalensRows() {
+  const datasetPath = path.resolve(
+    __dirname,
+    '../../sample-data/label_financial_analytics_rich.csv',
+  );
+  const content = fs.readFileSync(datasetPath, 'utf8');
+
+  return parseDatalensCsv(content);
+}
 
 // ---------- АРТИСТЫ ----------
 
@@ -23,7 +36,13 @@ async function listArtists(req, res, next) {
         _count: { select: { ownedTracks: true } },
       },
     });
-    res.json({ artists });
+    res.json({
+      artists: buildDatalensArtistRegistry(
+        loadDatalensRows(),
+        artists,
+        parseArtistIdMap(config.datalens.artistIdMap),
+      ),
+    });
   } catch (err) { next(err); }
 }
 
@@ -131,7 +150,7 @@ async function listAllTracks(req, res, next) {
         },
       },
     });
-    res.json({ tracks });
+    res.json({ tracks: buildDatalensTrackRegistry(loadDatalensRows(), tracks) });
   } catch (err) { next(err); }
 }
 
@@ -249,14 +268,7 @@ async function analytics(req, res, next) {
 // GET /api/admin/datalens-dashboard
 async function datalensDashboard(req, res, next) {
   try {
-    const datasetPath = path.resolve(
-      __dirname,
-      '../../sample-data/label_financial_analytics_rich.csv',
-    );
-    const content = fs.readFileSync(datasetPath, 'utf8');
-    const rows = parseDatalensCsv(content);
-
-    res.json(buildAdminDatalensDashboard(rows));
+    res.json(buildAdminDatalensDashboard(loadDatalensRows()));
   } catch (err) { next(err); }
 }
 

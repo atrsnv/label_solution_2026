@@ -82,6 +82,8 @@ const ArtistTracksRepository = () => {
                 {formatDate(track.releaseDate || track.createdAt)}
               </p>
 
+              <p>Источник: {track.source || 'ERP'}</p>
+
               <span
                 className={`artist-tracks__status artist-tracks__status--${track.status.toLowerCase()}`}
               >

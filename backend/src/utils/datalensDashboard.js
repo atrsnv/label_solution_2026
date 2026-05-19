@@ -195,6 +195,169 @@ function resolveArtistRows(rows, user, artistIdMap = {}) {
   });
 }
 
+function resolveUserDatalensArtistId(user, artistIdMap = {}) {
+  return artistIdMap[String(user.email || '').toLowerCase()] || null;
+}
+
+function findLocalUserForArtist(artistId, artistName, users, artistIdMap = {}) {
+  const normalizedArtistName = normalizeName(artistName);
+
+  return users.find((user) => {
+    const mappedArtistId = resolveUserDatalensArtistId(user, artistIdMap);
+
+    return mappedArtistId === artistId || normalizeName(user.name) === normalizedArtistName;
+  }) || null;
+}
+
+function buildDatalensArtistRegistry(rows, users, artistIdMap = {}) {
+  const artists = new Map();
+
+  rows
+    .filter((row) => row.role !== 'Лейбл')
+    .forEach((row) => {
+      const current = artists.get(row.artist_id) || {
+        artistId: row.artist_id,
+        artistName: row.artist_name,
+        tracks: new Set(),
+        amount: 0,
+      };
+
+      current.tracks.add(row.track_id);
+      current.amount += row.revenue_net;
+      artists.set(row.artist_id, current);
+    });
+
+  const registry = Array.from(artists.values()).map((artist) => {
+    const localUser = findLocalUserForArtist(
+      artist.artistId,
+      artist.artistName,
+      users,
+      artistIdMap,
+    );
+
+    return {
+      id: localUser?.id || `dl-${artist.artistId}`,
+      email: localUser?.email || 'Нет аккаунта в ERP',
+      name: artist.artistName,
+      labelShare: localUser?.labelShare ?? 30,
+      balance: roundMoney(artist.amount),
+      createdAt: localUser?.createdAt || null,
+      datalensArtistId: artist.artistId,
+      source: localUser ? 'ERP + DataLens' : 'DataLens',
+      hasAccount: Boolean(localUser),
+      _count: { ownedTracks: artist.tracks.size },
+    };
+  });
+
+  users
+    .filter((user) => user.role === 'ARTIST')
+    .forEach((user) => {
+      const alreadyIncluded = registry.some((artist) => artist.id === user.id);
+      if (alreadyIncluded) return;
+
+      registry.push({
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        labelShare: user.labelShare,
+        balance: user.balance,
+        createdAt: user.createdAt,
+        datalensArtistId: null,
+        source: 'ERP',
+        hasAccount: true,
+        _count: user._count || { ownedTracks: 0 },
+      });
+    });
+
+  return registry.sort((first, second) => {
+    if (first.hasAccount !== second.hasAccount) return first.hasAccount ? -1 : 1;
+
+    return first.name.localeCompare(second.name, 'ru');
+  });
+}
+
+function buildDatalensTrackRegistry(rows, localTracks = []) {
+  const tracks = new Map();
+
+  rows.forEach((row) => {
+    const current = tracks.get(row.track_id) || {
+      id: `dl-${row.track_id}`,
+      datalensTrackId: row.track_id,
+      title: row.track_title,
+      releaseDate: row.date,
+      createdAt: row.date,
+      status: 'APPROVED',
+      labelShare: 30,
+      source: 'DataLens',
+      coverUrl: null,
+      artists: new Map(),
+      splits: [],
+    };
+
+    if (row.role !== 'Лейбл') {
+      current.artists.set(row.artist_id, {
+        id: `dl-${row.artist_id}`,
+        name: row.artist_name,
+        email: 'DataLens',
+        role: row.role,
+      });
+    }
+
+    if (new Date(row.date) > new Date(current.createdAt)) {
+      current.createdAt = row.date;
+      current.releaseDate = row.date;
+    }
+
+    tracks.set(row.track_id, current);
+  });
+
+  const registry = Array.from(tracks.values()).map((track) => {
+    const localTrack = localTracks.find(
+      (item) => normalizeName(item.title) === normalizeName(track.title),
+    );
+    const owner = Array.from(track.artists.values())
+      .find((artist) => artist.role === 'Автор')
+      || Array.from(track.artists.values())[0]
+      || { id: 'dl-unknown', name: 'Неизвестный артист', email: 'DataLens' };
+
+    return {
+      ...track,
+      id: localTrack?.id || track.id,
+      releaseDate: localTrack?.releaseDate || track.releaseDate,
+      createdAt: localTrack?.createdAt || track.createdAt,
+      status: localTrack?.status || track.status,
+      labelShare: localTrack?.labelShare || track.labelShare,
+      source: localTrack ? 'ERP + DataLens' : track.source,
+      owner: localTrack?.owner || owner,
+      splits: localTrack?.splits || [],
+    };
+  });
+
+  localTracks.forEach((track) => {
+    const alreadyIncluded = registry.some((item) => item.id === track.id);
+    if (alreadyIncluded) return;
+
+    registry.push({
+      ...track,
+      datalensTrackId: null,
+      source: 'ERP',
+    });
+  });
+
+  return registry.sort((first, second) => {
+    return new Date(second.createdAt).getTime() - new Date(first.createdAt).getTime();
+  });
+}
+
+function buildArtistDatalensTrackRegistry(rows, user, artistIdMap = {}, localTracks = []) {
+  const artistRows = resolveArtistRows(rows, user, artistIdMap);
+  const datalensTracks = buildDatalensTrackRegistry(artistRows, []);
+  const userLocalTracks = localTracks.filter((track) => track.ownerId === user.id);
+  const merged = buildDatalensTrackRegistry(artistRows, userLocalTracks);
+
+  return merged.length ? merged : datalensTracks;
+}
+
 function buildArtistDatalensDashboard(rows, user, artistIdMap = {}) {
   const artistRows = resolveArtistRows(rows, user, artistIdMap);
   const byMonthMap = new Map();
@@ -282,4 +445,7 @@ module.exports = {
   parseDatalensCsv,
   buildAdminDatalensDashboard,
   buildArtistDatalensDashboard,
+  buildArtistDatalensTrackRegistry,
+  buildDatalensArtistRegistry,
+  buildDatalensTrackRegistry,
 };

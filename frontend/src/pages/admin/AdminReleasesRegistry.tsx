@@ -143,6 +143,7 @@ const AdminReleasesRegistry = () => {
                 <th>Артист</th>
                 <th>Название</th>
                 <th>Дата добавления</th>
+                <th>Источник</th>
                 <th>Статус сплита</th>
               </tr>
             </thead>
@@ -163,6 +164,7 @@ const AdminReleasesRegistry = () => {
 
                     <td>{track.title}</td>
                     <td>{formatDate(track.createdAt || track.releaseDate)}</td>
+                    <td>{track.source || 'ERP'}</td>
 
                     <td>
                       <span
@@ -177,7 +179,7 @@ const AdminReleasesRegistry = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="admin-releases__empty">
+                  <td colSpan={5} className="admin-releases__empty">
                     Релизов с таким статусом пока нет
                   </td>
                 </tr>

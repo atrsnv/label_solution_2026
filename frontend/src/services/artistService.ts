@@ -33,6 +33,8 @@ export interface ArtistTrack {
   status: TrackStatus;
   labelShare: number;
   createdAt: string;
+  source?: string;
+  datalensTrackId?: string | null;
   splits: Array<{
     id: string;
     share: number;
