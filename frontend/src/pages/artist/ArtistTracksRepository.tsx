@@ -15,6 +15,16 @@ const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString('ru-RU');
 };
 
+const TracksHeader = () => (
+  <div className="artist-tracks__header">
+    <h1>Мои релизы</h1>
+
+    <Link to="/artist" className="artist-tracks__back">
+      ← Назад в кабинет
+    </Link>
+  </div>
+);
+
 const ArtistTracksRepository = () => {
   const {
     data,
@@ -30,7 +40,7 @@ const ArtistTracksRepository = () => {
   if (isLoading) {
     return (
       <main className="artist-tracks">
-        <h1>Мои релизы</h1>
+        <TracksHeader />
 
         <p className="artist-tracks__message">Загружаем релизы...</p>
       </main>
@@ -40,7 +50,7 @@ const ArtistTracksRepository = () => {
   if (isError) {
     return (
       <main className="artist-tracks">
-        <h1>Мои релизы</h1>
+        <TracksHeader />
 
         <p className="artist-tracks__message">
           Не удалось загрузить релизы. Проверь, что backend запущен и ты вошла как артист.
@@ -51,7 +61,7 @@ const ArtistTracksRepository = () => {
 
   return (
     <main className="artist-tracks">
-      <h1>Мои релизы</h1>
+      <TracksHeader />
 
       <section className="artist-tracks__grid">
         <Link to="/artist/upload" className="artist-tracks__upload-card">
