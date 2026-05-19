@@ -1,8 +1,14 @@
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 const prisma = require('../config/prisma');
 const config = require('../config');
 const { addAmount, roundMoney } = require('../utils/analytics');
+const {
+  buildAdminDatalensDashboard,
+  parseDatalensCsv,
+} = require('../utils/datalensDashboard');
 
 // ---------- АРТИСТЫ ----------
 
@@ -240,6 +246,20 @@ async function analytics(req, res, next) {
   } catch (err) { next(err); }
 }
 
+// GET /api/admin/datalens-dashboard
+async function datalensDashboard(req, res, next) {
+  try {
+    const datasetPath = path.resolve(
+      __dirname,
+      '../../sample-data/label_financial_analytics_rich.csv',
+    );
+    const content = fs.readFileSync(datasetPath, 'utf8');
+    const rows = parseDatalensCsv(content);
+
+    res.json(buildAdminDatalensDashboard(rows));
+  } catch (err) { next(err); }
+}
+
 module.exports = {
   listArtists,
   getArtist,
@@ -249,4 +269,5 @@ module.exports = {
   listAllTracks,
   dashboardSummary,
   analytics,
+  datalensDashboard,
 };

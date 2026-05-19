@@ -53,6 +53,33 @@ export interface AdminTrack {
   }>;
 }
 
+export interface AdminDatalensDashboard {
+  title: string;
+  source: string;
+  summary: {
+    totalTurnover: number;
+    labelProfit: number;
+    artistPayouts: number;
+    totalStreams: number;
+    tracksCount: number;
+    artistsCount: number;
+  };
+  byArtist: Array<{ artistId: string; artistName: string; amount: number }>;
+  byTrack: Array<{ trackId: string; trackTitle: string; amount: number }>;
+  byPeriod: Array<{ period: string; amount: number }>;
+  bySource: Array<{ source: string; streams: number; amount: number }>;
+  byIncomeType: Array<{ incomeType: string; amount: number }>;
+  distribution: Array<{ name: string; amount: number }>;
+  profitability: Array<{
+    trackId: string;
+    trackTitle: string;
+    labelProfit: number;
+    artistPayouts: number;
+    total: number;
+    labelSharePercent: number;
+  }>;
+}
+
 export const adminService = {
   getDashboardSummary: async (): Promise<AdminSummary> => {
     const response = await api.get<AdminSummary>('/admin/dashboard/summary');
@@ -100,6 +127,12 @@ export const adminService = {
 
   getTracks: async (): Promise<{ tracks: AdminTrack[] }> => {
     const response = await api.get<{ tracks: AdminTrack[] }>('/admin/tracks');
+
+    return response.data;
+  },
+
+  getDatalensDashboard: async (): Promise<AdminDatalensDashboard> => {
+    const response = await api.get<AdminDatalensDashboard>('/admin/datalens-dashboard');
 
     return response.data;
   },

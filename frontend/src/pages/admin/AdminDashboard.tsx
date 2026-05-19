@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { adminService } from '../../services/adminService';
 import { useAuthStore } from '../../store/authStore';
 
-import DatalensPanel from '../../components/DatalensPanel/DatalensPanel';
+import AdminDatalensDashboard from '../../components/AdminDatalensDashboard/AdminDatalensDashboard';
 
 import './AdminDashboard.scss';
 
@@ -102,10 +102,7 @@ const AdminDashboard = () => {
         ))}
       </section>
 
-      <DatalensPanel
-        title="Аналитика лейбла"
-        className="admin-dashboard__datalens"
-      />
+      <AdminDatalensDashboard />
 
     </main>
   );

@@ -11,6 +11,7 @@ router.use(isAuth, isAdmin);
 // Dashboard
 router.get('/dashboard/summary', admin.dashboardSummary);
 router.get('/analytics', admin.analytics);
+router.get('/datalens-dashboard', admin.datalensDashboard);
 
 // Artists
 router.get('/artists', admin.listArtists);
