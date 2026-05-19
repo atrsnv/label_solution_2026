@@ -129,12 +129,16 @@
     }
   }
 
+  &__datalens {
+    min-height: 420px;
+  }
+
   &__panel {
     flex: 1;
     width: 100%;
     padding: 24px 28px 34px;
     border-radius: $radius-md $radius-md 0 0;
-    background: rgba(255, 255, 255, 0.035);
+    background: $section-bg;
     box-sizing: border-box;
   }
 
@@ -149,9 +153,11 @@
   h1 {
     margin: 0;
     color: $white;
-    font-size: 1.2rem;
+    font-family: $font-secondary;
+    font-size: 20px;
     line-height: 1;
-    font-weight: 800;
+    font-weight: 700;
+    letter-spacing: 0.02em;
   }
 
   &__deal-button {
@@ -179,9 +185,15 @@
 
   &__message {
     margin: 28px 0 0;
+    padding: 18px 20px;
+    border-radius: $radius-sm;
+    border: 1px solid rgba(255, 255, 255, 0.055);
+    background: rgba(255, 255, 255, 0.025);
     color: rgba(255, 255, 255, 0.72);
     font-size: 14px;
+    line-height: 1.45;
     font-family: $font-third;
+    box-sizing: border-box;
   }
 
   table {
@@ -234,6 +246,20 @@
     &__upload-actions {
       align-items: flex-start;
       flex-direction: column;
+    }
+
+    &__datalens {
+      min-height: auto;
+      padding: 20px;
+    }
+
+    &__datalens-top {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    &__datalens-frame {
+      height: 520px;
     }
 
     &__panel {

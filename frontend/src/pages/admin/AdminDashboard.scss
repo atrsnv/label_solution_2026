@@ -52,6 +52,10 @@
     gap: 18px;
   }
 
+  &__datalens {
+      margin-top: 42px;
+    }
+
   &__card {
     width: 100%;
     min-height: 120px;
@@ -116,5 +120,10 @@
       grid-template-columns: 1fr;
       margin-top: 50px;
     }
+
+    &__datalens {
+      margin-top: 32px;
+    }
+
   }
 }

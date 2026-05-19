@@ -3,6 +3,7 @@ import type { ChangeEvent, DragEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { adminService } from '../../services/adminService';
+import DatalensPanel from '../../components/DatalensPanel/DatalensPanel';
 
 import './AdminFinanceCenter.scss';
 
@@ -51,6 +52,8 @@ const AdminFinanceCenter = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['finance-reports'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-dashboard-summary'] });
+      queryClient.invalidateQueries({ queryKey: ['datalens-embed'] });
     },
   });
 
@@ -159,6 +162,11 @@ const AdminFinanceCenter = () => {
           </p>
         )}
       </div>
+
+      <DatalensPanel
+        title="DataLens аналитика"
+        className="admin-finance__datalens"
+      />
 
       <section className="admin-finance__panel">
         <div className="admin-finance__top">

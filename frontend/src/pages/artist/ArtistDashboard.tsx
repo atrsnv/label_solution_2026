@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import { artistService } from '../../services/artistService';
 import { useAuthStore } from '../../store/authStore';
 
+import DatalensPanel from '../../components/DatalensPanel/DatalensPanel';
+
 import './ArtistDashboard.scss';
 
 type Stat = {
@@ -222,6 +224,11 @@ const ArtistDashboard = () => {
           </div>
         ))}
       </section>
+
+      <DatalensPanel
+        title="Моя аналитика"
+        className="artist-dashboard__datalens"
+      />
 
       <section className="artist-dashboard__history">
         <div className="artist-dashboard__history-top">

@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { adminService } from '../../services/adminService';
 import { useAuthStore } from '../../store/authStore';
 
+import DatalensPanel from '../../components/DatalensPanel/DatalensPanel';
+
 import './AdminDashboard.scss';
 
 const formatMoney = (value: number) =>
@@ -99,6 +101,12 @@ const AdminDashboard = () => {
           </div>
         ))}
       </section>
+
+      <DatalensPanel
+        title="Аналитика лейбла"
+        className="admin-dashboard__datalens"
+      />
+
     </main>
   );
 };

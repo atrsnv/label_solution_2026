@@ -17,7 +17,7 @@ const HeroSection: React.FC = () => {
         <h1 className="hero-title">Where sound becomes identity.</h1>
 
         <p className="hero-description">
-          Мы бережно сохраняем авторское видение, усиливаем звучание и помогаем артистам строить устойчивую карьеру.
+          Мы бережно сохраняем авторское видение, усиливаем звучание, помогаем артистам строить устойчивую карьеру и показываем прозрачную аналитику через DataLens.
         </p>
 
         <button className="hero-btn" type="button" onClick={handleJoinClick}>

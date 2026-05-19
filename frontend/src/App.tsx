@@ -1,6 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import MainLayout from './layouts/MainLayout';
+import AdminLayout from './layouts/AdminLayout';
+import ArtistLayout from './layouts/ArtistLayout';
 
 import HomePage from './pages/HomePage/HomePage';
 import Login from './pages/Login/Login';
@@ -24,7 +26,9 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
+        </Route>
 
+        <Route element={<AdminLayout />}>
           <Route
             path="/admin"
             element={
@@ -60,7 +64,9 @@ function App() {
               </RoleRoute>
             }
           />
+        </Route>
 
+        <Route element={<ArtistLayout />}>
           <Route
             path="/artist"
             element={
@@ -96,9 +102,9 @@ function App() {
               </RoleRoute>
             }
           />
-
-          <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
