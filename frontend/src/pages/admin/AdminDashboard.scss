@@ -1,0 +1,129 @@
+@use '../../styles/variables' as *;
+
+.admin-dashboard {
+  width: 100%;
+  max-width: $container-width;
+  margin: 0 auto;
+  padding-top: 115px;
+  color: $white;
+  font-family: $font-main;
+
+  &__hero {
+    text-align: center;
+  }
+
+  &__label {
+    margin: 0 0 $spacing-lg;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  &__error {
+    margin: 24px auto 0;
+    max-width: 520px;
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 1rem;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 40px;
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    text-shadow: $text-shadow;
+    font-family: $font-secondary;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing-lg;
+    margin-top: 85px;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+
+  &__datalens {
+      margin-top: 42px;
+    }
+
+  &__card {
+    width: 100%;
+    min-height: 120px;
+    padding: 24px 26px;
+    border-radius: $radius-md;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid $border;
+    box-sizing: border-box;
+
+    p {
+      margin: 0 0 20px;
+      color: $white;
+      font-size: 20px;
+      font-weight: 700;
+      font-family: $font-secondary;
+    }
+
+    strong {
+      display: block;
+      color: #ffbd4a;
+      font-size: 1.55rem;
+      line-height: 1;
+      font-weight: 800;
+    }
+  }
+
+  &__button {
+    min-width: 180px;
+    padding: 9px 24px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.03);
+    color: $white;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: $font-third;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.25s ease;
+
+    &:hover {
+      box-shadow: $btn-shadow;
+      background: $hero-btn;
+    }
+  }
+}
+
+@media (max-width: 1100px) {
+  .admin-dashboard {
+    &__stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-dashboard {
+    padding-top: 70px;
+
+    &__stats {
+      grid-template-columns: 1fr;
+      margin-top: 50px;
+    }
+
+    &__datalens {
+      margin-top: 32px;
+    }
+
+  }
+}

@@ -1,0 +1,133 @@
+@import '../../styles/_variables.scss';
+
+.home-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;         
+  gap: $spacing-xl;
+  width: 100%;
+  padding: $spacing-lg 0;      
+  box-sizing: border-box;    
+  min-height: 100vh;     
+  
+  .page-row {          
+    display: flex;
+    gap: $spacing-xl;     
+    justify-content: center; 
+    width: 90%;          
+    max-width: 1200px;    
+    margin-top: $spacing-xl;
+  }
+
+  .page-block {
+    flex: 1;               
+    background: $section-bg;      
+    border: 1px solid $border;
+    border-radius: $radius-lg;
+    padding: 40px 30px;
+    display: flex;
+    align-items: center;     
+    justify-content: center;
+  }
+
+  @media (max-width: 1920px) {
+    .page-container {
+      width: 90%;
+    }
+  }
+
+  @media (max-width: 1280px) {
+    .page-container {
+      width: 95%;
+    }
+  }
+
+
+@media (max-width: 1024px) {
+  .home-page {
+    .hero-section {
+      flex-direction: column;
+      text-align: center;
+
+      .hero-text, .hero-image {
+        width: 100%;
+      }
+    }
+
+    .artist-list, .latest-release {
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+  }
+}
+
+
+@media (max-width: 768px) {
+  .home-page {
+
+    
+    .hero-section {
+      flex-direction: column;
+      text-align: center;
+
+      .hero-content,
+      .hero-image {
+        width: 100%;
+      }
+    }
+
+    
+    .artist-list, 
+    .latest-release {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+
+      .artist-card, 
+      .release-card {
+        width: 90%;       
+        max-width: 500px; 
+        margin-left: 0;   
+      }
+    }
+  }
+}
+
+
+@media (max-width: 425px) {
+  .home-page {
+
+    .artist-list, 
+    .latest-release {
+      width: 100%;
+      padding: 0 15px;
+      gap: 16px;
+
+      .artist-card, 
+      .release-card {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  }
+}
+
+
+@media (max-width: 320px) {
+  .home-page {
+
+    .artist-list, 
+    .latest-release {
+      gap: 10px;
+
+      .artist-card, 
+      .release-card {
+        width: 100%;
+      }
+    }
+  }
+}
+
+}
