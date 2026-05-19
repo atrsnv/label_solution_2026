@@ -37,6 +37,11 @@ const formatMoney = (value: number) =>
     maximumFractionDigits: 2,
   })} ₽`;
 
+const formatNumber = (value: number) =>
+  value.toLocaleString('ru-RU', {
+    maximumFractionDigits: 0,
+  });
+
 const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString('ru-RU');
 };
@@ -180,6 +185,12 @@ const ArtistDashboard = () => {
       buttonText: 'Мои треки',
       path: '/artist/tracks',
     },
+    {
+      title: 'Стримов из DataLens',
+      value: formatNumber(dashboard.totalStreams || 0),
+      variant: 'green',
+      buttonText: dashboard.datalensArtist?.artistName || 'DataLens',
+    },
   ];
 
   return (
@@ -224,6 +235,7 @@ const ArtistDashboard = () => {
                     ? openWithdrawModal
                     : undefined
                 }
+                disabled={stat.buttonText !== 'Запросить вывод'}
               >
                 {stat.buttonText}
 
@@ -259,6 +271,7 @@ const ArtistDashboard = () => {
               <th>Дата</th>
               <th>Название трека</th>
               <th>Тип дохода</th>
+              <th>Источник</th>
               <th>Сумма</th>
             </tr>
           </thead>
@@ -270,12 +283,13 @@ const ArtistDashboard = () => {
                   <td>{formatDate(earning.createdAt)}</td>
                   <td>{earning.track?.title || 'Без названия'}</td>
                   <td>{earning.period || 'Стриминг'}</td>
+                  <td>{earning.source || 'DataLens'}</td>
                   <td>{formatMoney(earning.amount)}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={4} className="artist-dashboard__empty">
+                <td colSpan={5} className="artist-dashboard__empty">
                   Пока нет транзакций
                 </td>
               </tr>

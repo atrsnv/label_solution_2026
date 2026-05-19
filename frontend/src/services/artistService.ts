@@ -7,10 +7,16 @@ export interface ArtistDashboardResponse {
   tracksCount: number;
   approvedCount: number;
   totalEarned: number;
+  totalStreams: number;
+  datalensArtist?: {
+    artistId: string;
+    artistName: string;
+  } | null;
   lastEarnings: Array<{
     id: string;
     amount: number;
     period?: string | null;
+    source?: string | null;
     createdAt: string;
     track?: {
       id: string;

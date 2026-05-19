@@ -176,7 +176,110 @@ function buildAdminDatalensDashboard(rows) {
   };
 }
 
+function normalizeName(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function resolveArtistRows(rows, user, artistIdMap = {}) {
+  const mappedArtistId = artistIdMap[String(user.email || '').toLowerCase()];
+  const userName = normalizeName(user.name);
+  const userEmailName = normalizeName(String(user.email || '').split('@')[0]);
+
+  return rows.filter((row) => {
+    if (row.role === 'Лейбл') return false;
+    if (mappedArtistId && row.artist_id === mappedArtistId) return true;
+
+    const artistName = normalizeName(row.artist_name);
+
+    return artistName === userName || artistName === userEmailName;
+  });
+}
+
+function buildArtistDatalensDashboard(rows, user, artistIdMap = {}) {
+  const artistRows = resolveArtistRows(rows, user, artistIdMap);
+  const byMonthMap = new Map();
+  const byTrackMap = new Map();
+  const bySourceMap = new Map();
+  const byIncomeTypeMap = new Map();
+
+  artistRows.forEach((row) => {
+    addAmount(byMonthMap, monthKey(row.date), row.revenue_net, {
+      period: monthKey(row.date),
+    });
+    addAmount(byTrackMap, row.track_id, row.revenue_net, {
+      trackId: row.track_id,
+      trackTitle: row.track_title,
+    });
+    addAmount(bySourceMap, row.source, row.revenue_net, {
+      source: row.source,
+      streams: 0,
+    });
+    addAmount(byIncomeTypeMap, row.income_type, row.revenue_net, {
+      incomeType: row.income_type,
+    });
+
+    const source = bySourceMap.get(row.source);
+    source.streams += row.streams;
+  });
+
+  const totalEarned = artistRows.reduce((sum, row) => sum + row.revenue_net, 0);
+  const totalStreams = artistRows.reduce((sum, row) => sum + row.streams, 0);
+  const tracks = new Set(artistRows.map((row) => row.track_id));
+  const datalensArtist = artistRows[0]
+    ? {
+      artistId: artistRows[0].artist_id,
+      artistName: artistRows[0].artist_name,
+    }
+    : null;
+
+  return {
+    title: 'Моя аналитика из DataLens',
+    source: 'DataLens dataset: Dimensions',
+    datalensArtist,
+    summary: {
+      artistName: user.name,
+      datalensArtistName: datalensArtist?.artistName || user.name,
+      balance: roundMoney(totalEarned),
+      totalEarned: roundMoney(totalEarned),
+      labelShare: user.labelShare,
+      tracksCount: tracks.size,
+      approvedTracksCount: tracks.size,
+      earningsCount: artistRows.length,
+      totalStreams,
+    },
+    byMonth: Array.from(byMonthMap.values()).map((item) => ({
+      ...item,
+      amount: roundMoney(item.amount),
+    })),
+    byTrack: toSortedArray(byTrackMap),
+    bySource: Array.from(bySourceMap.values())
+      .map((item) => ({
+        ...item,
+        amount: roundMoney(item.amount),
+      }))
+      .sort((a, b) => b.streams - a.streams),
+    byIncomeType: toSortedArray(byIncomeTypeMap),
+    lastEarnings: artistRows
+      .slice()
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 10)
+      .map((row) => ({
+        id: row.transaction_id,
+        trackTitle: row.track_title,
+        period: row.income_type,
+        source: row.source,
+        amount: roundMoney(row.revenue_net),
+        createdAt: row.date,
+        track: {
+          id: row.track_id,
+          title: row.track_title,
+        },
+      })),
+  };
+}
+
 module.exports = {
   parseDatalensCsv,
   buildAdminDatalensDashboard,
+  buildArtistDatalensDashboard,
 };
