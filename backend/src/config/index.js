@@ -24,7 +24,9 @@ const config = {
     artistIdMap: process.env.DATALENS_ARTIST_ID_MAP || '',
     labelId: process.env.DATALENS_LABEL_ID || 'default-label',
     labelParam: process.env.DATALENS_LABEL_PARAM || 'labelId',
-    baseUrl: process.env.DATALENS_BASE_URL || 'https://datalens.yandex',
+    baseUrl: process.env.DATALENS_BASE_URL || 'https://api.datalens.tech',
+    dataUrl: process.env.DATALENS_DATA_URL || '',
+    dataFilePath: process.env.DATALENS_DATA_FILE_PATH || '',
   },
 };
 

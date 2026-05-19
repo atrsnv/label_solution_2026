@@ -30,6 +30,15 @@ type AdminAnalytics = {
 };
 
 type ArtistAnalytics = {
+  title?: string;
+  source?: {
+    mode: string;
+    dashboardTitle?: string;
+    entryId?: string | null;
+    dataUrlConfigured?: boolean;
+    fallbackReason?: string;
+    apiStatus?: string;
+  };
   summary: {
     balance: number;
     totalEarned: number;
@@ -80,12 +89,17 @@ const DatalensPanel = ({
   const periodList = data?.byMonth || [];
   const maxPrimary = Math.max(...primaryList.map((item) => item.amount), 1);
   const maxPeriod = Math.max(...periodList.map((item) => item.amount), 1);
+  const sourceTitle = user?.role === 'ARTIST'
+    ? (data as ArtistAnalytics | undefined)?.source?.dashboardTitle
+      || (data as ArtistAnalytics | undefined)?.title
+      || 'Панель артиста'
+    : 'Лейбл';
 
   return (
     <section className={`datalens-panel ${className}`.trim()}>
       <div className="datalens-panel__top">
         <h2>{title}</h2>
-        <span>{user?.role === 'ADMIN' ? 'Лейбл' : 'Личный кабинет'}</span>
+        <span>{sourceTitle}</span>
       </div>
 
       {isLoading && (

@@ -1,7 +1,5 @@
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
-const fs = require('fs');
-const path = require('path');
 const prisma = require('../config/prisma');
 const config = require('../config');
 const { addAmount, roundMoney } = require('../utils/analytics');
@@ -9,19 +7,9 @@ const {
   buildAdminDatalensDashboard,
   buildDatalensArtistRegistry,
   buildDatalensTrackRegistry,
-  parseDatalensCsv,
 } = require('../utils/datalensDashboard');
 const { parseArtistIdMap } = require('../utils/datalens');
-
-function loadDatalensRows() {
-  const datasetPath = path.resolve(
-    __dirname,
-    '../../sample-data/label_financial_analytics_rich.csv',
-  );
-  const content = fs.readFileSync(datasetPath, 'utf8');
-
-  return parseDatalensCsv(content);
-}
+const { loadDatalensRows } = require('../services/datalensSource.service');
 
 // ---------- АРТИСТЫ ----------
 
@@ -36,12 +24,14 @@ async function listArtists(req, res, next) {
         _count: { select: { ownedTracks: true } },
       },
     });
+    const datalensRows = await loadDatalensRows('admin');
     res.json({
       artists: buildDatalensArtistRegistry(
-        loadDatalensRows(),
+        datalensRows.rows,
         artists,
         parseArtistIdMap(config.datalens.artistIdMap),
       ),
+      source: datalensRows.source,
     });
   } catch (err) { next(err); }
 }
@@ -150,7 +140,11 @@ async function listAllTracks(req, res, next) {
         },
       },
     });
-    res.json({ tracks: buildDatalensTrackRegistry(loadDatalensRows(), tracks) });
+    const datalensRows = await loadDatalensRows('admin');
+    res.json({
+      tracks: buildDatalensTrackRegistry(datalensRows.rows, tracks),
+      source: datalensRows.source,
+    });
   } catch (err) { next(err); }
 }
 
@@ -268,7 +262,11 @@ async function analytics(req, res, next) {
 // GET /api/admin/datalens-dashboard
 async function datalensDashboard(req, res, next) {
   try {
-    res.json(buildAdminDatalensDashboard(loadDatalensRows()));
+    const datalensRows = await loadDatalensRows('admin');
+    const dashboard = buildAdminDatalensDashboard(datalensRows.rows);
+    dashboard.source = datalensRows.source;
+
+    res.json(dashboard);
   } catch (err) { next(err); }
 }
 

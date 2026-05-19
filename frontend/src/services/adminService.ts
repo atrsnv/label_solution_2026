@@ -60,7 +60,14 @@ export interface AdminTrack {
 
 export interface AdminDatalensDashboard {
   title: string;
-  source: string;
+  source: string | {
+    mode: string;
+    dashboardTitle?: string;
+    entryId?: string | null;
+    dataUrlConfigured?: boolean;
+    fallbackReason?: string;
+    apiStatus?: string;
+  };
   summary: {
     totalTurnover: number;
     labelProfit: number;

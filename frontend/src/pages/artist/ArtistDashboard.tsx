@@ -166,6 +166,9 @@ const ArtistDashboard = () => {
       ? `Приглашения · ${pendingInvitesCount}`
       : 'Приглашения';
   const welcomeName = dashboard.datalensArtist?.artistName || user?.name || 'Артист';
+  const sourceBadge = dashboard.source?.mode === 'datalens-export'
+    ? 'DataLens live'
+    : 'DataLens linked';
 
   const artistStats: Stat[] = [
     {
@@ -214,7 +217,7 @@ const ArtistDashboard = () => {
           </h1>
         </div>
 
-        <span className="artist-dashboard__source">DataLens synced</span>
+        <span className="artist-dashboard__source">{sourceBadge}</span>
       </section>
 
       <section className="artist-dashboard__stats">

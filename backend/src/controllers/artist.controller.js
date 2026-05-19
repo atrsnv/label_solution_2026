@@ -1,33 +1,23 @@
-const fs = require('fs');
-const path = require('path');
 const prisma = require('../config/prisma');
 const config = require('../config');
 const { parseArtistIdMap } = require('../utils/datalens');
 const {
   buildArtistDatalensTrackRegistry,
   buildArtistDatalensDashboard,
-  parseDatalensCsv,
 } = require('../utils/datalensDashboard');
-
-function loadDatalensRows() {
-  const datasetPath = path.resolve(
-    __dirname,
-    '../../sample-data/label_financial_analytics_rich.csv',
-  );
-  const content = fs.readFileSync(datasetPath, 'utf8');
-
-  return parseDatalensCsv(content);
-}
+const { loadDatalensRows } = require('../services/datalensSource.service');
 
 // GET /api/artist/dashboard
 async function dashboard(req, res, next) {
   try {
     const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+    const datalensRows = await loadDatalensRows('artist');
     const datalens = buildArtistDatalensDashboard(
-      loadDatalensRows(),
+      datalensRows.rows,
       user,
       parseArtistIdMap(config.datalens.artistIdMap),
     );
+    datalens.source = datalensRows.source;
 
     res.json({
       balance: datalens.summary.balance,
@@ -37,6 +27,7 @@ async function dashboard(req, res, next) {
       totalEarned: datalens.summary.totalEarned,
       totalStreams: datalens.summary.totalStreams,
       datalensArtist: datalens.datalensArtist,
+      source: datalens.source,
       lastEarnings: datalens.lastEarnings,
     });
   } catch (e) { next(e); }
@@ -46,11 +37,13 @@ async function dashboard(req, res, next) {
 async function analytics(req, res, next) {
   try {
     const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+    const datalensRows = await loadDatalensRows('artist');
     const datalens = buildArtistDatalensDashboard(
-      loadDatalensRows(),
+      datalensRows.rows,
       user,
       parseArtistIdMap(config.datalens.artistIdMap),
     );
+    datalens.source = datalensRows.source;
 
     res.json(datalens);
   } catch (e) { next(e); }
@@ -67,13 +60,15 @@ async function myTracks(req, res, next) {
         splits: { include: { user: { select: { id: true, name: true, email: true } } } },
       },
     });
+    const datalensRows = await loadDatalensRows('artist');
     res.json({
       tracks: buildArtistDatalensTrackRegistry(
-        loadDatalensRows(),
+        datalensRows.rows,
         user,
         parseArtistIdMap(config.datalens.artistIdMap),
         localTracks,
       ),
+      source: datalensRows.source,
     });
   } catch (e) { next(e); }
 }

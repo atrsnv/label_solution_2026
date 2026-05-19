@@ -105,8 +105,14 @@ DATALENS_ARTIST_ID_MAP=vasya@label.local:ART-01,petya@label.local:ART-02
 DATALENS_EMBED_BASE_URL=https://datalens.ru
 DATALENS_LABEL_ID=default-label
 DATALENS_LABEL_PARAM=labelId
-DATALENS_BASE_URL=https://datalens.yandex
+DATALENS_BASE_URL=https://api.datalens.tech
+DATALENS_DATA_URL=
+DATALENS_DATA_FILE_PATH=sample-data/label_financial_analytics_rich.csv
 ```
+
+`DATALENS_ARTIST_ENTRY_ID` должен указывать на дашборд **“ERP: Новые данные. Панель артиста”**. Backend использует этот DataLens-контур для `/api/artist/dashboard`, `/api/artist/analytics` и `/api/artist/tracks`.
+
+Если задан `DATALENS_DATA_URL`, backend забирает строки из CSV/JSON export endpoint и фронт рисует личную аналитику без iframe. Если export URL недоступен, используется `DATALENS_DATA_FILE_PATH` как локальный fallback для демо.
 
 ## Формат отчёта дистрибьютора
 

@@ -399,7 +399,7 @@ function buildArtistDatalensDashboard(rows, user, artistIdMap = {}) {
     : null;
 
   return {
-    title: 'Моя аналитика из DataLens',
+    title: 'ERP: Новые данные. Панель артиста',
     source: 'DataLens dataset: Dimensions',
     datalensArtist,
     summary: {

@@ -73,12 +73,15 @@ const AdminDatalensDashboard = () => {
 
   const maxPeriod = Math.max(...data.byPeriod.map((item) => item.amount), 1);
   const totalDistribution = data.distribution.reduce((sum, item) => sum + item.amount, 0) || 1;
+  const sourceLabel = typeof data.source === 'string'
+    ? data.source
+    : data.source.dashboardTitle || data.source.mode;
 
   return (
     <section className="admin-datalens">
       <div className="admin-datalens__top">
         <div>
-          <p>{data.source}</p>
+          <p>{sourceLabel}</p>
           <h2>{data.title}</h2>
         </div>
 

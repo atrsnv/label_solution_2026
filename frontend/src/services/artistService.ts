@@ -12,6 +12,14 @@ export interface ArtistDashboardResponse {
     artistId: string;
     artistName: string;
   } | null;
+  source?: {
+    mode: string;
+    dashboardTitle?: string;
+    entryId?: string | null;
+    dataUrlConfigured?: boolean;
+    fallbackReason?: string;
+    apiStatus?: string;
+  };
   lastEarnings: Array<{
     id: string;
     amount: number;
