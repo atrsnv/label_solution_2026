@@ -163,6 +163,7 @@ const ArtistDashboard = () => {
     pendingInvitesCount > 0
       ? `Приглашения · ${pendingInvitesCount}`
       : 'Приглашения';
+  const welcomeName = dashboard.datalensArtist?.artistName || user?.name || 'Артист';
 
   const artistStats: Stat[] = [
     {
@@ -201,7 +202,7 @@ const ArtistDashboard = () => {
         <h1>
           Добро пожаловать,
           <br />
-          {user?.name || 'Артист'}!
+          {welcomeName}!
         </h1>
       </section>
 

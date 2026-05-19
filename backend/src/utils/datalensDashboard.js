@@ -177,7 +177,10 @@ function buildAdminDatalensDashboard(rows) {
 }
 
 function normalizeName(value) {
-  return String(value || '').trim().toLowerCase();
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-zа-яё0-9]/gi, '');
 }
 
 function resolveArtistRows(rows, user, artistIdMap = {}) {

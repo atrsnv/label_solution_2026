@@ -61,6 +61,22 @@ test('buildArtistDatalensDashboard filters rows by mapped DataLens artist id', (
   ]);
 });
 
+test('buildArtistDatalensDashboard matches compact email login to spaced artist name', () => {
+  const rows = parseDatalensCsv([
+    'transaction_id,date,track_id,track_title,artist_id,artist_name,role,income_type,source,revenue_gross,revenue_net,streams',
+    'TX-1,2026-03-01,TRK-1,Song,ART-2,SODA LUV,Автор,Стриминг,Яндекс Музыка,100,70,1000',
+  ].join('\n'));
+
+  const dashboard = buildArtistDatalensDashboard(
+    rows,
+    { email: 'sodaluv@label.local', name: 'sodaluv', labelShare: 30 },
+    {},
+  );
+
+  assert.equal(dashboard.summary.totalEarned, 70);
+  assert.equal(dashboard.datalensArtist.artistName, 'SODA LUV');
+});
+
 test('buildDatalensArtistRegistry includes artists that only exist in DataLens', () => {
   const rows = parseDatalensCsv([
     'transaction_id,date,track_id,track_title,artist_id,artist_name,role,income_type,source,revenue_gross,revenue_net,streams',
