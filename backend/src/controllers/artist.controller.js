@@ -5,19 +5,31 @@ const {
   buildArtistDatalensTrackRegistry,
   buildArtistDatalensDashboard,
 } = require('../utils/datalensDashboard');
+const { applyPayoutsToArtistDashboard } = require('../utils/artistBalance');
 const { loadDatalensRows } = require('../services/datalensSource.service');
+
+async function buildCurrentArtistDashboard(user) {
+  const [datalensRows, payouts] = await Promise.all([
+    loadDatalensRows('artist'),
+    prisma.payout.findMany({ where: { userId: user.id } }),
+  ]);
+  let datalens = buildArtistDatalensDashboard(
+    datalensRows.rows,
+    user,
+    parseArtistIdMap(config.datalens.artistIdMap),
+  );
+
+  datalens = applyPayoutsToArtistDashboard(datalens, payouts);
+  datalens.source = datalensRows.source;
+
+  return { datalens, payouts };
+}
 
 // GET /api/artist/dashboard
 async function dashboard(req, res, next) {
   try {
     const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-    const datalensRows = await loadDatalensRows('artist');
-    const datalens = buildArtistDatalensDashboard(
-      datalensRows.rows,
-      user,
-      parseArtistIdMap(config.datalens.artistIdMap),
-    );
-    datalens.source = datalensRows.source;
+    const { datalens } = await buildCurrentArtistDashboard(user);
 
     res.json({
       balance: datalens.summary.balance,
@@ -37,13 +49,7 @@ async function dashboard(req, res, next) {
 async function analytics(req, res, next) {
   try {
     const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-    const datalensRows = await loadDatalensRows('artist');
-    const datalens = buildArtistDatalensDashboard(
-      datalensRows.rows,
-      user,
-      parseArtistIdMap(config.datalens.artistIdMap),
-    );
-    datalens.source = datalensRows.source;
+    const { datalens } = await buildCurrentArtistDashboard(user);
 
     res.json(datalens);
   } catch (e) { next(e); }
@@ -99,18 +105,23 @@ async function myInvites(req, res, next) {
 // GET /api/artist/wallet
 async function wallet(req, res, next) {
   try {
-    const userId = req.user.id;
-    const [user, earnings, payouts] = await Promise.all([
-      prisma.user.findUnique({ where: { id: userId } }),
+    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+    const [{ datalens, payouts }, earnings] = await Promise.all([
+      buildCurrentArtistDashboard(user),
       prisma.earning.findMany({
-        where: { userId },
+        where: { userId: user.id },
         orderBy: { createdAt: 'desc' },
         take: 100,
         include: { track: { select: { id: true, title: true } } },
       }),
-      prisma.payout.findMany({ where: { userId }, orderBy: { createdAt: 'desc' } }),
     ]);
-    res.json({ balance: user.balance, earnings, payouts });
+    res.json({
+      balance: datalens.summary.balance,
+      totalEarned: datalens.summary.totalEarned,
+      deductedPayouts: datalens.summary.deductedPayouts,
+      earnings,
+      payouts: payouts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)),
+    });
   } catch (e) { next(e); }
 }
 
@@ -121,18 +132,24 @@ async function requestWithdraw(req, res, next) {
     if (!amount || amount <= 0) return res.status(400).json({ error: 'amount must be > 0' });
 
     const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-    if (amount > user.balance) return res.status(400).json({ error: 'Insufficient balance' });
+    const { datalens } = await buildCurrentArtistDashboard(user);
+    const availableBalance = datalens.summary.balance;
+
+    if (amount > availableBalance) return res.status(400).json({ error: 'Insufficient balance' });
 
     const payout = await prisma.$transaction(async (tx) => {
       await tx.user.update({
         where: { id: user.id },
-        data: { balance: { decrement: amount } },
+        data: { balance: Math.max(availableBalance - amount, 0) },
       });
       return tx.payout.create({
         data: { userId: user.id, amount, status: 'REQUESTED' },
       });
     });
-    res.status(201).json({ payout });
+    res.status(201).json({
+      payout,
+      balance: Math.max(availableBalance - amount, 0),
+    });
   } catch (e) { next(e); }
 }
 
