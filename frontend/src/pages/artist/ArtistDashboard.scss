@@ -5,82 +5,111 @@
   width: 100%;
   max-width: $container-width;
   margin: 0 auto;
-  padding-top: 115px;
+  padding: 86px 0 48px;
   display: flex;
   flex-direction: column;
+  gap: 24px;
   color: $white;
   font-family: $font-main;
   box-sizing: border-box;
 
   &__hero {
-    text-align: center;
+    min-height: 190px;
+    padding: 34px 36px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    border-radius: $radius-md;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+      linear-gradient(135deg, rgba(255, 193, 77, 0.11), transparent 34%),
+      linear-gradient(160deg, rgba(118, 245, 166, 0.08), transparent 50%),
+      #171717;
+    box-sizing: border-box;
   }
 
   &__label {
-    margin: 0 0 $spacing-lg;
-    color: rgba(255, 255, 255, 0.45);
-    font-size: 1rem;
-    font-weight: 500;
+    margin: 0 0 12px;
+    color: rgba(255, 255, 255, 0.52);
+    font-size: 0.86rem;
+    font-weight: 600;
+  }
+
+  &__source {
+    flex: 0 0 auto;
+    padding: 9px 13px;
+    border-radius: 999px;
+    border: 1px solid rgba(118, 245, 166, 0.28);
+    background: rgba(118, 245, 166, 0.08);
+    color: #8ef19b;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
   }
 
   &__error {
-    margin: 24px auto 0;
+    margin: 18px 0 0;
     max-width: 520px;
     color: rgba(255, 255, 255, 0.68);
     font-size: 1rem;
     line-height: 1.5;
-    text-align: center;
   }
 
   h1 {
+    max-width: 720px;
     margin: 0;
-    font-size: 2.35rem;
-    line-height: 1.05;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    text-shadow: $text-shadow;
+    font-size: 2.1rem;
+    line-height: 1.08;
+    font-weight: 850;
+    letter-spacing: 0;
+    text-shadow: none;
   }
 
   &__stats {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: $spacing-lg;
-    margin-top: 85px;
-  }
-
-  &__stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 18px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
   }
 
   &__datalens {
-    margin-top: 24px;
+    margin-top: 2px;
   }
 
   &__card {
-    width: 100%;
-    min-height: 120px;
-    padding: 24px 26px;
+    min-height: 174px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 18px;
     border-radius: $radius-md;
-    background: rgba(255, 255, 255, 0.035);
-    border: 1px solid $border;
+    background: #1b1b1b;
+    border: 1px solid rgba(255, 255, 255, 0.075);
     box-sizing: border-box;
 
     p {
-      margin: 0 0 20px;
-      color: $white;
-      font-size: 0.95rem;
+      margin: 0 0 14px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.8rem;
       font-weight: 700;
+    }
+
+    div > span {
+      display: block;
+      margin-top: 12px;
+      color: rgba(255, 255, 255, 0.45);
+      font-size: 0.74rem;
+      font-weight: 600;
     }
   }
 
   &__value {
     display: block;
-    font-size: 1.55rem;
-    line-height: 1;
-    font-weight: 800;
+    font-size: 1.48rem;
+    line-height: 1.05;
+    font-weight: 850;
+    overflow-wrap: anywhere;
 
     &--yellow {
       color: #ffbd4a;
@@ -96,39 +125,41 @@
   }
 
   &__button {
-    width: 190px;
-    height: 34px;
-    padding: 0 24px;
+    width: 100%;
+    min-height: 36px;
+    padding: 0 16px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
+    gap: 10px;
     flex-shrink: 0;
-
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.85);
-    background: rgba(255, 255, 255, 0.03);
+    border-radius: $radius-sm;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.055);
     color: $white;
-
     font-family: $font-main;
     font-size: 0.78rem;
-    font-weight: 700;
+    font-weight: 800;
     line-height: 1;
     text-align: center;
     text-decoration: none;
-
     cursor: pointer;
     box-sizing: border-box;
     appearance: none;
-    transition: 0.25s ease;
+    transition: 0.18s ease;
 
-    &:hover {
-      background: $hero-btn;
-      box-shadow: $btn-shadow;
+    &:hover:not(:disabled) {
+      border-color: rgba(255, 255, 255, 0.32);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    &:disabled {
+      cursor: default;
+      color: rgba(255, 255, 255, 0.58);
     }
 
     span {
-      font-size: 1.15rem;
+      font-size: 1rem;
       line-height: 1;
     }
   }
@@ -136,11 +167,11 @@
   &__history {
     position: relative;
     flex: 1;
-    min-height: 520px;
-    margin-top: 24px;
-    padding: 24px 24px 44px;
-    border-radius: $radius-md $radius-md 0 0;
-    background: rgba(255, 255, 255, 0.035);
+    min-height: 420px;
+    padding: 24px;
+    border-radius: $radius-md;
+    background: #1b1b1b;
+    border: 1px solid rgba(255, 255, 255, 0.075);
     box-sizing: border-box;
   }
 
@@ -161,18 +192,18 @@
 
   &__deal-button {
     min-width: 220px;
-    padding: 6px 16px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.85);
-    background: rgba(255, 255, 255, 0.03);
+    padding: 8px 16px;
+    border-radius: $radius-sm;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.055);
     color: $white;
     font-size: 0.72rem;
-    font-weight: 700;
+    font-weight: 800;
     cursor: pointer;
-    transition: 0.25s ease;
+    transition: 0.18s ease;
 
     &:hover:not(:disabled) {
-      background: $white-opacity-20;
+      background: rgba(255, 255, 255, 0.1);
     }
 
     &:disabled {
@@ -334,9 +365,9 @@
       min-width: 120px;
       height: 36px;
       padding: 0 18px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.85);
-      background: rgba(255, 255, 255, 0.03);
+      border-radius: $radius-sm;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.055);
       color: $white;
       font-size: 14px;
       font-family: $font-third;
@@ -346,7 +377,6 @@
 
       &:hover:not(:disabled) {
         background: $white-opacity-20;
-        box-shadow: $btn-shadow;
       }
 
       &:disabled {
@@ -357,13 +387,27 @@
   }
 }
 
+@media (max-width: 1050px) {
+  .artist-dashboard {
+    &__stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
 @media (max-width: 900px) {
   .artist-dashboard {
     padding-top: 70px;
 
-    &__stats {
-      grid-template-columns: 1fr;
-      margin-top: 50px;
+    &__hero {
+      min-height: 0;
+      padding: 26px;
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    h1 {
+      font-size: 1.72rem;
     }
 
     &__history {
@@ -375,12 +419,22 @@
       flex-direction: column;
     }
 
-    &__datalens {
-      margin-top: 28px;
-    }
-
     table {
       min-width: 720px;
+    }
+  }
+}
+
+@media (max-width: 620px) {
+  .artist-dashboard {
+    padding-top: 58px;
+
+    &__stats {
+      grid-template-columns: 1fr;
+    }
+
+    &__card {
+      min-height: 150px;
     }
   }
 }

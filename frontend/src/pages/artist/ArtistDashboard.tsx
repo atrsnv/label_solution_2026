@@ -15,7 +15,9 @@ type Stat = {
   value: string;
   variant: 'yellow' | 'green' | 'orange';
   buttonText: string;
+  meta?: string;
   path?: string;
+  disabled?: boolean;
 };
 
 type ArtistInvite = {
@@ -171,6 +173,7 @@ const ArtistDashboard = () => {
       value: formatMoney(dashboard.balance),
       variant: 'yellow',
       buttonText: invitesButtonText,
+      meta: 'Доступно к выплате',
       path: '/artist/invites',
     },
     {
@@ -178,12 +181,14 @@ const ArtistDashboard = () => {
       value: formatMoney(dashboard.totalEarned),
       variant: 'green',
       buttonText: 'Запросить вывод',
+      meta: 'По данным DataLens',
     },
     {
       title: 'Треков на площадках',
       value: dashboard.tracksCount.toString(),
       variant: 'orange',
       buttonText: 'Мои треки',
+      meta: 'Активные релизы',
       path: '/artist/tracks',
     },
     {
@@ -191,25 +196,31 @@ const ArtistDashboard = () => {
       value: formatNumber(dashboard.totalStreams || 0),
       variant: 'green',
       buttonText: dashboard.datalensArtist?.artistName || 'DataLens',
+      meta: 'Текущий артист',
+      disabled: true,
     },
   ];
 
   return (
     <main className="artist-dashboard">
       <section className="artist-dashboard__hero">
-        <p className="artist-dashboard__label">Дэшборд артиста</p>
+        <div>
+          <p className="artist-dashboard__label">Дэшборд артиста</p>
 
-        <h1>
-          Добро пожаловать,
-          <br />
-          {welcomeName}!
-        </h1>
+          <h1>
+            Добро пожаловать,
+            <br />
+            {welcomeName}!
+          </h1>
+        </div>
+
+        <span className="artist-dashboard__source">DataLens synced</span>
       </section>
 
       <section className="artist-dashboard__stats">
         {artistStats.map((stat) => (
-          <div className="artist-dashboard__stat" key={stat.title}>
-            <article className="artist-dashboard__card">
+          <article className="artist-dashboard__card" key={stat.title}>
+            <div>
               <p>{stat.title}</p>
 
               <strong
@@ -217,7 +228,9 @@ const ArtistDashboard = () => {
               >
                 {stat.value}
               </strong>
-            </article>
+
+              {stat.meta && <span>{stat.meta}</span>}
+            </div>
 
             {stat.path ? (
               <Link to={stat.path} className="artist-dashboard__button">
@@ -236,14 +249,14 @@ const ArtistDashboard = () => {
                     ? openWithdrawModal
                     : undefined
                 }
-                disabled={stat.buttonText !== 'Запросить вывод'}
+                disabled={stat.disabled || stat.buttonText !== 'Запросить вывод'}
               >
                 {stat.buttonText}
 
                 {stat.buttonText === 'Запросить вывод' && <span>›</span>}
               </button>
             )}
-          </div>
+          </article>
         ))}
       </section>
 
