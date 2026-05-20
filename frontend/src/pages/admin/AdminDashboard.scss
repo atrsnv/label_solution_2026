@@ -104,6 +104,10 @@
   }
 }
 
+.admin-dashboard > .admin-datalens {
+  margin-top: 42px;
+}
+
 @media (max-width: 1100px) {
   .admin-dashboard {
     &__stats {

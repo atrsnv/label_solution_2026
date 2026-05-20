@@ -11,6 +11,10 @@ const Header: React.FC = () => {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
 
+  const handleLogoClick = () => {
+    navigate('/');
+  };
+
   const handleCabinetClick = () => {
     if (!user) return;
 
@@ -28,25 +32,37 @@ const Header: React.FC = () => {
         <button
           type="button"
           className="logo"
-          onClick={() => navigate('/')}
+          onClick={handleLogoClick}
         >
           VAULT
         </button>
 
         <nav className="menu">
-          <button type="button" onClick={() => navigate('/')}>
+          <button
+            type="button"
+            onClick={() => navigate('/')}
+          >
             Главная
           </button>
 
-          <button type="button" onClick={() => navigate('/')}>
+          <button
+            type="button"
+            onClick={() => navigate('/artists')}
+          >
             Артисты
           </button>
 
-          <button type="button" onClick={() => navigate('/')}>
+          <button
+            type="button"
+            onClick={() => navigate('/releases')}
+          >
             Релизы
           </button>
 
-          <button type="button" onClick={() => navigate('/')}>
+          <button
+            type="button"
+            onClick={() => {}}
+          >
             Сотрудничество
           </button>
         </nav>
@@ -55,7 +71,9 @@ const Header: React.FC = () => {
           {user ? (
             <>
               <button type="button" onClick={handleCabinetClick}>
-                {user.role === 'ADMIN' ? 'Кабинет админа' : 'Кабинет артиста'}
+                {user.role === 'ADMIN'
+                  ? 'Кабинет админа'
+                  : 'Кабинет артиста'}
               </button>
 
               <button type="button" onClick={handleLogout}>

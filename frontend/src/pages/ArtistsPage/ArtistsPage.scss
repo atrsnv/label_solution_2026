@@ -1,0 +1,217 @@
+@use '../../styles/variables' as *;
+
+.artists-page {
+  width: 100%;
+  max-width: $container-width;
+  margin: 0 auto;
+  padding: 42px 0 80px;
+  box-sizing: border-box;
+
+  &__hero {
+    margin-bottom: 34px;
+
+    p {
+      margin: 0 0 10px;
+      color: rgba(255, 255, 255, 0.42);
+      font-size: 14px;
+      font-family: $font-third;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    h1 {
+      margin: 0;
+      color: $white;
+      font-size: 3rem;
+      line-height: 1;
+      font-family: $font-secondary;
+      font-weight: 700;
+    }
+  }
+
+  &__message {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 18px;
+    text-align: center;
+    font-family: $font-third;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+}
+
+.artists-page-card {
+  min-height: 220px;
+  padding: 22px;
+  display: flex;
+  align-items: stretch;
+  gap: 34px;
+  border-radius: $radius-md;
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  background:
+    radial-gradient(circle at top left, rgba(118, 245, 166, 0.07), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018)),
+    rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(12px);
+  transition: 0.25s ease;
+  box-sizing: border-box;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: rgba(118, 245, 166, 0.2);
+    background:
+      radial-gradient(circle at top left, rgba(118, 245, 166, 0.1), transparent 38%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.058), rgba(255, 255, 255, 0.02)),
+      rgba(255, 255, 255, 0.035);
+  }
+
+  &__avatar {
+    width: 220px;
+    min-width: 220px;
+    height: 220px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background:
+      radial-gradient(circle at center, rgba(255, 255, 255, 0.18), transparent 55%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.025)),
+      #171717;
+    color: $white;
+    font-size: 4.8rem;
+    font-family: $font-secondary;
+    font-weight: 800;
+    line-height: 1;
+    box-sizing: border-box;
+  }
+
+  &__content {
+    flex: 1;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 4px 0;
+    box-sizing: border-box;
+  }
+
+  &__info {
+    h2 {
+      margin: 0;
+      color: $white;
+      font-size: 2.7rem;
+      line-height: 0.96;
+      font-weight: 700;
+      font-family: $font-secondary;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      margin: 16px 0 0;
+      color: rgba(255, 255, 255, 0.48);
+      font-size: 15px;
+      line-height: 1.35;
+      font-family: $font-third;
+    }
+  }
+
+  &__button {
+    margin-top: auto;
+    min-width: 160px;
+    min-height: 44px;
+    padding: 0 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid rgba(118, 245, 166, 0.48);
+    background: rgba(118, 245, 166, 0.045);
+    color: #8ef19b;
+    font-size: 15px;
+    font-family: $font-third;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.25s ease;
+
+    &::before {
+      content: '▷';
+      margin-right: 10px;
+      font-size: 0.82rem;
+      line-height: 1;
+    }
+
+    &:hover {
+      border-color: rgba(118, 245, 166, 0.76);
+      background: rgba(118, 245, 166, 0.1);
+      box-shadow: 0 0 22px rgba(118, 245, 166, 0.08);
+      color: $white;
+    }
+  }
+}
+
+@media (max-width: 1100px) {
+  .artists-page {
+    &__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .artists-page {
+    padding-top: 32px;
+
+    &__hero {
+      h1 {
+        font-size: 2.3rem;
+      }
+    }
+  }
+
+  .artists-page-card {
+    min-height: 240px;
+    gap: 24px;
+
+    &__avatar {
+      width: 180px;
+      min-width: 180px;
+      height: 210px;
+      font-size: 4rem;
+    }
+
+    &__content {
+      min-height: 210px;
+    }
+
+    &__info {
+      h2 {
+        font-size: 2.1rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 650px) {
+  .artists-page-card {
+    flex-direction: column;
+
+    &__avatar {
+      width: 100%;
+      min-width: 0;
+      height: 250px;
+    }
+
+    &__content {
+      min-height: 150px;
+    }
+
+    &__button {
+      align-self: stretch;
+      width: 100%;
+    }
+  }
+}

@@ -7,6 +7,9 @@ import ArtistLayout from './layouts/ArtistLayout';
 import HomePage from './pages/HomePage/HomePage';
 import Login from './pages/Login/Login';
 
+import ArtistsPage from './pages/ArtistsPage';
+import ReleasesPage from './pages/ReleasesPage/ReleasesPage';
+
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminArtistsRegistry from './pages/admin/AdminArtistsRegistry';
 import AdminReleasesRegistry from './pages/admin/AdminReleasesRegistry';
@@ -26,6 +29,8 @@ function App() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/artists" element={<ArtistsPage />} />
+          <Route path="/releases" element={<ReleasesPage />} />
           <Route path="/login" element={<Login />} />
         </Route>
 

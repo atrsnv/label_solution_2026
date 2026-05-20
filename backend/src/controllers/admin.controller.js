@@ -21,7 +21,6 @@ async function getAuthArtists() {
       name: true,
       role: true,
       createdAt: true,
-      datalensArtistId: true,
     },
   });
 }
@@ -104,26 +103,28 @@ async function getArtist(req, res, next) {
 // PATCH /api/admin/artists/:id  { name?, datalensArtistId? }
 async function updateArtist(req, res, next) {
   try {
-    const { name, datalensArtistId } = req.body;
+    const { name } = req.body;
+
     if (typeof name !== 'string' || !name.trim()) {
       return res.status(400).json({ error: 'name is required' });
     }
 
-    const data = { name: name.trim() };
-    if (datalensArtistId !== undefined) {
-      data.datalensArtistId = typeof datalensArtistId === 'string' && datalensArtistId.trim()
-        ? datalensArtistId.trim()
-        : null;
-    }
-
     const artist = await prisma.user.update({
       where: { id: req.params.id },
-      data,
-      select: { id: true, email: true, name: true, role: true, createdAt: true, datalensArtistId: true },
+      data: { name: name.trim() },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        createdAt: true,
+      },
     });
 
     res.json({ artist });
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 }
 
 // DELETE /api/admin/artists/:id
