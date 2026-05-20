@@ -62,6 +62,8 @@ const AdminFinanceCenter = () => {
       queryClient.invalidateQueries({ queryKey: ['finance-reports'] });
       queryClient.invalidateQueries({ queryKey: ['admin-dashboard-summary'] });
       queryClient.invalidateQueries({ queryKey: ['native-analytics'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-artists'] });
+      queryClient.invalidateQueries({ queryKey: ['artist-dashboard'] });
     },
   });
 
@@ -92,14 +94,18 @@ const AdminFinanceCenter = () => {
     setUploadError(null);
 
     try {
+      let lastResult: { ok?: boolean; rowsCount?: number; totalAmount?: number } = {};
       for (const file of selectedFiles) {
-        await importReportMutation.mutateAsync(file);
+        lastResult = await importReportMutation.mutateAsync(file);
       }
 
+      const suffix = lastResult.totalAmount != null
+        ? ` Общая сумма: ${formatMoney(lastResult.totalAmount)}, строк: ${lastResult.rowsCount}.`
+        : '';
       setUploadMessage(
         selectedFiles.length === 1
-          ? 'Отчет успешно загружен и обработан.'
-          : `Отчеты успешно загружены и обработаны: ${selectedFiles.length}.`,
+          ? `Отчет успешно загружен и обработан.${suffix}`
+          : `Отчеты успешно загружены и обработаны: ${selectedFiles.length}.${suffix}`,
       );
 
       setSelectedFiles([]);

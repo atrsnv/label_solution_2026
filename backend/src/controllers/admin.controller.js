@@ -9,6 +9,7 @@ const {
 } = require('../utils/datalensDashboard');
 const { parseArtistIdMap } = require('../utils/datalens');
 const { loadDatalensRows } = require('../services/datalensSource.service');
+const { isChartsModeAvailable, loadAdminChartsDashboard } = require('../services/datalensCharts.service');
 
 async function getAuthArtists() {
   return prisma.user.findMany({
@@ -20,6 +21,7 @@ async function getAuthArtists() {
       name: true,
       role: true,
       createdAt: true,
+      datalensArtistId: true,
     },
   });
 }
@@ -50,10 +52,14 @@ function toAdminAnalyticsPayload(dashboard) {
 }
 
 async function getAdminDatalensDashboard() {
+  if (!config.datalens.dataUrl && isChartsModeAvailable()) {
+    const chartsDashboard = await loadAdminChartsDashboard();
+    if (chartsDashboard) return chartsDashboard;
+  }
+
   const datalensRows = await loadDatalensRows('admin');
   const dashboard = buildAdminDatalensDashboard(datalensRows.rows);
   dashboard.source = datalensRows.source;
-
   return dashboard;
 }
 
@@ -95,21 +101,52 @@ async function getArtist(req, res, next) {
   } catch (err) { next(err); }
 }
 
-// PATCH /api/admin/artists/:id  { name? }
+// PATCH /api/admin/artists/:id  { name?, datalensArtistId? }
 async function updateArtist(req, res, next) {
   try {
-    const { name } = req.body;
+    const { name, datalensArtistId } = req.body;
     if (typeof name !== 'string' || !name.trim()) {
       return res.status(400).json({ error: 'name is required' });
     }
 
+    const data = { name: name.trim() };
+    if (datalensArtistId !== undefined) {
+      data.datalensArtistId = typeof datalensArtistId === 'string' && datalensArtistId.trim()
+        ? datalensArtistId.trim()
+        : null;
+    }
+
     const artist = await prisma.user.update({
       where: { id: req.params.id },
-      data: { name: name.trim() },
-      select: { id: true, email: true, name: true, role: true, createdAt: true },
+      data,
+      select: { id: true, email: true, name: true, role: true, createdAt: true, datalensArtistId: true },
     });
 
     res.json({ artist });
+  } catch (err) { next(err); }
+}
+
+// DELETE /api/admin/artists/:id
+async function deleteArtist(req, res, next) {
+  try {
+    const user = await prisma.user.findUnique({ where: { id: req.params.id } });
+    if (!user) return res.status(404).json({ error: 'Артист не найден' });
+    if (user.role === 'ADMIN') return res.status(403).json({ error: 'Нельзя удалить администратора' });
+
+    const id = req.params.id;
+    // Delete earnings on tracks owned by this user (other collaborators' earnings)
+    await prisma.$executeRawUnsafe('DELETE FROM "Earning" WHERE "trackId" IN (SELECT "id" FROM "Track" WHERE "ownerId" = ?)', id);
+    // Delete this user's own earnings and payouts
+    await prisma.$executeRawUnsafe('DELETE FROM "Earning" WHERE "userId" = ?', id);
+    await prisma.$executeRawUnsafe('DELETE FROM "Payout" WHERE "userId" = ?', id);
+    // Delete splits: where user is collaborator, or on tracks owned by this user
+    await prisma.$executeRawUnsafe('DELETE FROM "Split" WHERE "userId" = ?', id);
+    await prisma.$executeRawUnsafe('DELETE FROM "Split" WHERE "trackId" IN (SELECT "id" FROM "Track" WHERE "ownerId" = ?)', id);
+    // Delete tracks, invites, then the user
+    await prisma.$executeRawUnsafe('DELETE FROM "Track" WHERE "ownerId" = ?', id);
+    await prisma.$executeRawUnsafe('DELETE FROM "Invite" WHERE "createdById" = ?', id);
+    await prisma.user.delete({ where: { id } });
+    res.json({ ok: true });
   } catch (err) { next(err); }
 }
 
@@ -217,6 +254,7 @@ module.exports = {
   listArtists,
   getArtist,
   updateArtist,
+  deleteArtist,
   createInvite,
   createArtistDirect,
   listAllTracks,

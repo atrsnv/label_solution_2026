@@ -14,17 +14,40 @@ datasource db {
 // Role: "ADMIN" | "ARTIST"
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  password     String
-  name         String
-  role         String   @default("ARTIST")
+  id                String   @id @default(cuid())
+  email             String   @unique
+  password          String
+  name              String
+  role              String   @default("ARTIST")
+  datalensArtistId  String?
+  payoutDetails     String?  // JSON: { type, fullName, bank, bik, account, phone }
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   // только auth/onboarding
   invites      Invite[]   @relation("InviteCreator")
+  payouts      Payout[]
+}
+
+model Payout {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Float
+  status    String   @default("REQUESTED") // REQUESTED | APPROVED | REJECTED
+  details   String?  // JSON snapshot of requisites at request time
+  comment   String?  // admin comment on approve/reject
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  filename    String
+  totalAmount Float    @default(0)
+  rowsCount   Int      @default(0)
+  createdAt   DateTime @default(now())
 }
 
 // Инвайт-ссылки / временные пароли для добавления артистов админом

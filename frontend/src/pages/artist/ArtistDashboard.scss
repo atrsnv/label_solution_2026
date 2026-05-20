@@ -56,6 +56,25 @@
     line-height: 1.5;
   }
 
+  &__alert {
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-radius: $radius-md;
+    border: 1px solid rgba(255, 193, 77, 0.32);
+    background: rgba(255, 193, 77, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.92rem;
+    line-height: 1.5;
+
+    strong {
+      color: #ffd47a;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+  }
+
   h1 {
     max-width: 720px;
     margin: 0;
@@ -384,6 +403,78 @@
         opacity: 0.55;
       }
     }
+  }
+}
+
+  &__amount {
+    color: #77e687;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  &__source-cell {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.82rem;
+  }
+
+  &__requisites {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8rem;
+    font-family: monospace;
+  }
+
+  &__payout-status {
+    display: inline-flex;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+
+    &--pending  { color: #ffbd4a; background: rgba(255,189,74,.12); border: 1px solid rgba(255,189,74,.25); }
+    &--approved { color: #77e687; background: rgba(119,230,135,.12); border: 1px solid rgba(119,230,135,.25); }
+    &--rejected { color: #ff6b6b; background: rgba(255,107,107,.12); border: 1px solid rgba(255,107,107,.25); }
+  }
+
+  &__modal--wide {
+    max-width: 560px !important;
+    width: 100%;
+  }
+
+  &__modal-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 4px;
+
+    button {
+      flex: 1;
+      padding: 8px 0;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: transparent;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+
+      &.active {
+        background: rgba(255,255,255,0.1);
+        border-color: rgba(255,255,255,0.25);
+        color: $white;
+      }
+    }
+  }
+
+  &__modal-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__modal-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
   }
 }
 

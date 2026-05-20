@@ -315,14 +315,23 @@ function buildDatalensTrackRegistry(rows) {
   });
 
   const registry = Array.from(tracks.values()).map((track) => {
-    const owner = Array.from(track.artists.values())
-      .find((artist) => artist.role === 'Автор')
-      || Array.from(track.artists.values())[0]
+    const artistsList = Array.from(track.artists.values());
+    const owner = artistsList.find((artist) => artist.role === 'Автор')
+      || artistsList[0]
       || { id: 'dl-unknown', name: 'Неизвестный артист', email: 'DataLens' };
 
     return {
-      ...track,
+      id: track.id,
+      datalensTrackId: track.datalensTrackId,
+      title: track.title,
+      releaseDate: track.releaseDate,
+      createdAt: track.createdAt,
+      status: track.status,
+      labelShare: track.labelShare,
+      source: track.source,
+      coverUrl: track.coverUrl,
       owner,
+      collaborators: artistsList,
       splits: [],
     };
   });
@@ -334,7 +343,11 @@ function buildDatalensTrackRegistry(rows) {
 
 function buildArtistDatalensTrackRegistry(rows, user, artistIdMap = {}) {
   const artistRows = resolveArtistRows(rows, user, artistIdMap);
-  return buildDatalensTrackRegistry(artistRows);
+  // Collect all track IDs the artist participated in (including feats)
+  const trackIds = new Set(artistRows.map((row) => row.track_id));
+  // Use full rows for those tracks so all collaborators and owner info are preserved
+  const trackRows = rows.filter((row) => trackIds.has(row.track_id));
+  return buildDatalensTrackRegistry(trackRows);
 }
 
 function buildArtistDatalensDashboard(rows, user, artistIdMap = {}) {

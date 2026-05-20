@@ -21,7 +21,17 @@ function normalizeRpcBaseUrl(baseUrl = '') {
 }
 
 function getFallbackCsvPath() {
-  const filePath = config.datalens.dataFilePath || 'sample-data/label_financial_analytics_rich.csv';
+  // Prefer runtime path set by the import controller (admin CSV upload)
+  const { getRuntimeDataFilePath } = require('../state/dataPath');
+  const runtimePath = getRuntimeDataFilePath();
+  if (runtimePath && fs.existsSync(runtimePath)) return runtimePath;
+
+  const filePath = config.datalens.dataFilePath;
+  if (!filePath) {
+    // Auto-fallback to uploads/data-current.csv if it exists
+    const defaultPath = path.resolve(__dirname, '..', '..', 'uploads', 'data-current.csv');
+    return fs.existsSync(defaultPath) ? defaultPath : null;
+  }
 
   return path.isAbsolute(filePath)
     ? filePath
@@ -125,14 +135,21 @@ async function loadRemoteRows() {
 
   if (!dataUrl) return null;
 
+  // Send IAM/org headers only when calling DataLens hosts.
+  // Public buckets (storage.yandexcloud.net etc.) reject unrelated Authorization headers.
+  const isDatalensHost = /datalens\.(tech|ru|yandex\.cloud)/.test(dataUrl);
+  const authHeaders = isDatalensHost
+    ? {
+      ...(iamToken ? { Authorization: `Bearer ${iamToken}` } : {}),
+      ...(orgId ? { 'x-dl-org-id': orgId } : {}),
+    }
+    : {};
+
   const response = await axios.get(dataUrl, {
     responseType: 'text',
     timeout: 10000,
     transformResponse: [(data) => data],
-    headers: {
-      ...(iamToken ? { Authorization: `Bearer ${iamToken}` } : {}),
-      ...(orgId ? { 'x-dl-org-id': orgId } : {}),
-    },
+    headers: authHeaders,
   });
 
   const contentType = String(response.headers['content-type'] || '');
@@ -161,7 +178,37 @@ async function loadDatalensRows(scope = 'artist') {
       };
     }
   } catch (error) {
-    const fallbackContent = fs.readFileSync(getFallbackCsvPath(), 'utf8');
+    const fallbackPath = getFallbackCsvPath();
+
+    if (!config.datalens.allowLocalFallback && !fallbackPath) {
+      return {
+        rows: [],
+        source: {
+          mode: 'datalens-export-unavailable',
+          dashboardTitle: dashboard.dashboardTitle,
+          entryId: dashboard.entryId,
+          dataUrlConfigured: true,
+          error: error.response?.status || error.code || 'REMOTE_DATA_UNAVAILABLE',
+          apiStatus: dashboard.apiStatus || 'ok',
+        },
+      };
+    }
+
+    if (!fallbackPath) {
+      return {
+        rows: [],
+        source: {
+          mode: 'datalens-export-unavailable',
+          dashboardTitle: dashboard.dashboardTitle,
+          entryId: dashboard.entryId,
+          dataUrlConfigured: true,
+          error: error.response?.status || error.code || 'REMOTE_DATA_UNAVAILABLE',
+          apiStatus: dashboard.apiStatus || 'ok',
+        },
+      };
+    }
+
+    const fallbackContent = fs.readFileSync(fallbackPath, 'utf8');
 
     return {
       rows: parseDatalensCsv(fallbackContent),
@@ -176,7 +223,36 @@ async function loadDatalensRows(scope = 'artist') {
     };
   }
 
-  const content = fs.readFileSync(getFallbackCsvPath(), 'utf8');
+  const fallbackPath = getFallbackCsvPath();
+
+  // Allow local file if fallback is explicitly enabled OR if an uploaded file is present
+  if (!config.datalens.allowLocalFallback && !fallbackPath) {
+    return {
+      rows: [],
+      source: {
+        mode: 'datalens-data-url-required',
+        dashboardTitle: dashboard.dashboardTitle,
+        entryId: dashboard.entryId,
+        dataUrlConfigured: false,
+        apiStatus: dashboard.apiStatus || 'ok',
+      },
+    };
+  }
+
+  if (!fallbackPath) {
+    return {
+      rows: [],
+      source: {
+        mode: 'datalens-data-url-required',
+        dashboardTitle: dashboard.dashboardTitle,
+        entryId: dashboard.entryId,
+        dataUrlConfigured: false,
+        apiStatus: dashboard.apiStatus || 'ok',
+      },
+    };
+  }
+
+  const content = fs.readFileSync(fallbackPath, 'utf8');
 
   return {
     rows: parseDatalensCsv(content),

@@ -92,6 +92,27 @@ export interface AdminDatalensDashboard {
   }>;
 }
 
+export interface AdminPayout {
+  id: string;
+  amount: number;
+  status: 'REQUESTED' | 'APPROVED' | 'REJECTED';
+  comment: string | null;
+  createdAt: string;
+  updatedAt: string;
+  details: {
+    type: 'bank';
+    fullName: string;
+    bank: string;
+    bik: string;
+    account: string;
+  } | {
+    type: 'sbp';
+    fullName: string;
+    phone: string;
+  } | null;
+  user: { id: string; name: string; email: string };
+}
+
 export const adminService = {
   getDashboardSummary: async (): Promise<AdminSummary> => {
     const response = await api.get<AdminSummary>('/admin/dashboard/summary');
@@ -113,9 +134,15 @@ export const adminService = {
 
   updateArtist: async (
     id: string,
-    data: Partial<Pick<AdminArtist, 'name'>>,
+    data: Partial<Pick<AdminArtist, 'name' | 'datalensArtistId'>>,
   ): Promise<{ artist: AdminArtist }> => {
     const response = await api.patch<{ artist: AdminArtist }>(`/admin/artists/${id}`, data);
+
+    return response.data;
+  },
+
+  deleteArtist: async (id: string): Promise<{ ok: boolean }> => {
+    const response = await api.delete<{ ok: boolean }>(`/admin/artists/${id}`);
 
     return response.data;
   },
@@ -148,16 +175,16 @@ export const adminService = {
     return response.data;
   },
 
-  importReport: async (file: File) => {
+  importReport: async (file: File): Promise<{ ok: boolean; filename: string; rowsCount: number; totalAmount: number }> => {
     const formData = new FormData();
 
     formData.append('file', file);
 
-    const response = await api.post('/admin/finance/import', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await api.post<{ ok: boolean; filename: string; rowsCount: number; totalAmount: number }>(
+      '/admin/finance/import',
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } },
+    );
 
     return response.data;
   },
@@ -170,6 +197,18 @@ export const adminService = {
 
   getReport: async (id: string) => {
     const response = await api.get(`/admin/finance/reports/${id}`);
+
+    return response.data;
+  },
+
+  getPayouts: async (): Promise<{ payouts: AdminPayout[] }> => {
+    const response = await api.get<{ payouts: AdminPayout[] }>('/admin/payouts');
+
+    return response.data;
+  },
+
+  resolvePayout: async (id: string, status: 'APPROVED' | 'REJECTED', comment: string): Promise<{ payout: AdminPayout }> => {
+    const response = await api.patch<{ payout: AdminPayout }>(`/admin/payouts/${id}`, { status, comment });
 
     return response.data;
   },

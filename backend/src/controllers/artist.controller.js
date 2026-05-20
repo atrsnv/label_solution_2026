@@ -6,6 +6,7 @@ const {
   buildArtistDatalensDashboard,
 } = require('../utils/datalensDashboard');
 const { loadDatalensRows } = require('../services/datalensSource.service');
+const { isChartsModeAvailable, loadArtistChartsDashboard } = require('../services/datalensCharts.service');
 
 async function getCurrentUser(userId) {
   return prisma.user.findUnique({
@@ -16,11 +17,17 @@ async function getCurrentUser(userId) {
       name: true,
       role: true,
       createdAt: true,
+      datalensArtistId: true,
     },
   });
 }
 
 async function buildCurrentArtistDashboard(user) {
+  if (!config.datalens.dataUrl && isChartsModeAvailable()) {
+    const chartsDashboard = await loadArtistChartsDashboard(user, parseArtistIdMap(config.datalens.artistIdMap));
+    if (chartsDashboard) return chartsDashboard;
+  }
+
   const datalensRows = await loadDatalensRows('artist');
   const datalens = buildArtistDatalensDashboard(
     datalensRows.rows,
@@ -28,7 +35,6 @@ async function buildCurrentArtistDashboard(user) {
     parseArtistIdMap(config.datalens.artistIdMap),
   );
   datalens.source = datalensRows.source;
-
   return datalens;
 }
 

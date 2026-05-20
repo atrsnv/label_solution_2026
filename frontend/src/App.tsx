@@ -11,6 +11,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminArtistsRegistry from './pages/admin/AdminArtistsRegistry';
 import AdminReleasesRegistry from './pages/admin/AdminReleasesRegistry';
 import AdminFinanceCenter from './pages/admin/AdminFinanceCenter';
+import AdminPayouts from './pages/admin/AdminPayouts';
 
 import ArtistDashboard from './pages/artist/ArtistDashboard';
 import ArtistTracksRepository from './pages/artist/ArtistTracksRepository';
@@ -61,6 +62,15 @@ function App() {
             element={
               <RoleRoute role="ADMIN">
                 <AdminFinanceCenter />
+              </RoleRoute>
+            }
+          />
+
+          <Route
+            path="/admin/payouts"
+            element={
+              <RoleRoute role="ADMIN">
+                <AdminPayouts />
               </RoleRoute>
             }
           />

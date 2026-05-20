@@ -75,6 +75,12 @@ const AdminDashboard = () => {
       buttonText: 'Финансовый центр',
       path: '/admin/finance',
     },
+    {
+      title: 'Заявки на вывод',
+      value: String(summary.pendingPayouts > 0 ? '!' : '—'),
+      buttonText: 'Обработать заявки',
+      path: '/admin/payouts',
+    },
   ];
 
   return (
