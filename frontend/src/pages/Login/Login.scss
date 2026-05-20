@@ -35,47 +35,18 @@
       background: transparent;
       border: none;
       color: rgba(255, 255, 255, 0.7);
+      font-family: $font-secondary;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.3s;
 
       &.active {
+        font-weight: 600;
         border-bottom: 2px solid $white;
         color: $white;
       }
 
       &:hover:not(.active) {
         color: rgba(255, 255, 255, 0.9);
-      }
-    }
-  }
-
-  .login-role-switch {
-    display: flex;
-    gap: 10px;
-
-    button {
-      flex: 1;
-      cursor: pointer;
-      border: 1px solid rgba(255, 255, 255, 0.28);
-      border-radius: 999px;
-      padding: 10px 12px;
-      background: transparent;
-      color: rgba(255, 255, 255, 0.72);
-      font-size: 0.88rem;
-      font-weight: 500;
-      transition: all 0.25s ease;
-
-      &.active {
-        color: $white;
-        border-color: rgba(255, 255, 255, 0.75);
-        background: rgba(255, 255, 255, 0.14);
-        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
-      }
-
-      &:hover:not(.active) {
-        color: rgba(255, 255, 255, 0.9);
-        background: rgba(255, 255, 255, 0.08);
       }
     }
   }
@@ -98,6 +69,8 @@
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.3);
       background: #222;
+      font-family: $font-third;
+      font-weight: 400;
       color: $white;
       outline: none;
       transition: border-color 0.25s ease, background 0.25s ease;
@@ -123,6 +96,7 @@
     button {
       margin-top: 10px;
       padding: 12px;
+      font-family: $font-third;
       font-weight: 600;
       font-size: 1rem;
       border-radius: 30px;

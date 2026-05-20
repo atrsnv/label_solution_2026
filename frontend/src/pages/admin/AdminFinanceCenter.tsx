@@ -6,6 +6,7 @@ import { adminService } from '../../services/adminService';
 import DatalensPanel from '../../components/DatalensPanel/DatalensPanel';
 
 import './AdminFinanceCenter.scss';
+import BackButton from '../../components/BackButton/BackButton';
 
 type FinanceReport = {
   id: string;
@@ -125,6 +126,7 @@ const AdminFinanceCenter = () => {
 
   return (
     <main className="admin-finance">
+      <BackButton />
       <label
         className="admin-finance__upload"
         onDragOver={(event) => event.preventDefault()}

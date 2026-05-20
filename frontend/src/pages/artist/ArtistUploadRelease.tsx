@@ -7,6 +7,7 @@ import { trackService, type CreateTrackPayload } from '../../services/trackServi
 import { useAuthStore } from '../../store/authStore';
 
 import './ArtistUploadRelease.scss';
+import BackButton from '../../components/BackButton/BackButton';
 
 type ExtraAuthor = {
   id: number;
@@ -293,6 +294,7 @@ const ArtistUploadRelease = () => {
 
   return (
     <main className="artist-upload">
+      <BackButton />
       <form className="artist-upload__form" onSubmit={handleSubmit}>
         <h1>Форма загрузки трека</h1>
 

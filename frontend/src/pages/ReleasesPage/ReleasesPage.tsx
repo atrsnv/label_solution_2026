@@ -92,14 +92,6 @@ const ReleasesPage = () => {
                   Дата релиза:{' '}
                   {formatDate(track.releaseDate || track.createdAt)}
                 </p>
-
-                <span
-                  className={`release-card__status release-card__status--${String(
-                    track.status,
-                  ).toLowerCase()}`}
-                >
-                  {statusLabel}
-                </span>
               </div>
             </article>
           );

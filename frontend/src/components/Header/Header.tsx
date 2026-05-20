@@ -11,15 +11,19 @@ const Header: React.FC = () => {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
 
-  const handleLogoClick = () => {
+  const handleHomeClick = () => {
+  if (!user) {
     navigate('/');
-  };
+    return;
+  }
 
-  const handleCabinetClick = () => {
-    if (!user) return;
+  if (user.role === 'ADMIN') {
+    navigate('/admin');
+    return;
+  }
 
-    navigate(user.role === 'ADMIN' ? '/admin' : '/artist');
-  };
+  navigate('/artist');
+};
 
   const handleLogout = () => {
     logout();
@@ -32,7 +36,7 @@ const Header: React.FC = () => {
         <button
           type="button"
           className="logo"
-          onClick={handleLogoClick}
+          onClick={handleHomeClick}
         >
           VAULT
         </button>
@@ -40,7 +44,7 @@ const Header: React.FC = () => {
         <nav className="menu">
           <button
             type="button"
-            onClick={() => navigate('/')}
+            onClick={handleHomeClick}
           >
             Главная
           </button>
@@ -70,12 +74,6 @@ const Header: React.FC = () => {
         <div className="auth-buttons">
           {user ? (
             <>
-              <button type="button" onClick={handleCabinetClick}>
-                {user.role === 'ADMIN'
-                  ? 'Кабинет админа'
-                  : 'Кабинет артиста'}
-              </button>
-
               <button type="button" onClick={handleLogout}>
                 Выйти
               </button>

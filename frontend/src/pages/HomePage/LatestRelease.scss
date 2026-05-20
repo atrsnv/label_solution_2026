@@ -11,7 +11,7 @@
   margin: 0 0 52px;
   font-family: $font-secondary;
   font-size: 20px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1;
   letter-spacing: 0.04em;
   color: $white;
@@ -49,7 +49,8 @@
   padding-left: $spacing-md;
 
   .release-name {
-    font-weight: 700;
+    font-family: $font-third;
+    font-weight: 600;
     font-size: 1.8rem;
     color: $white;
     line-height: 1.1;
@@ -58,6 +59,8 @@
   .release-artist {
     margin-top: $spacing-xs;
     color: $white-opacity-20;
+    font-family: $font-secondary;
+    font-weight: 500;
     font-size: 14px;
     line-height: 1.2;
   }
@@ -69,6 +72,8 @@
     background: transparent;
     color: $white;
     cursor: pointer;
+    font-family: $font-third;
+    font-weight: 600;
     font-weight: 500;
     align-self: flex-start;
     margin-top: auto;

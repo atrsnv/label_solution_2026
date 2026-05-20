@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { adminService, type AdminArtist } from '../../services/adminService';
 
 import './AdminArtistsRegistry.scss';
+import BackButton from '../../components/BackButton/BackButton';
 
 type ArtistStatus = 'Активен' | 'Нет аккаунта';
 
@@ -425,6 +426,7 @@ const AdminArtistsRegistry = () => {
 
   return (
     <main className="admin-artists">
+      <BackButton />
       <section className="admin-artists__panel">
         <div className="admin-artists__top">
           <h1>Реестр артистов</h1>

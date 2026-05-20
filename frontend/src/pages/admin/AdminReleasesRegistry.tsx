@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { adminService, type TrackStatus } from '../../services/adminService';
 
 import './AdminReleasesRegistry.scss';
+import BackButton from '../../components/BackButton/BackButton';
 
 type ReleaseFilter = TrackStatus;
 
@@ -116,6 +117,7 @@ const AdminReleasesRegistry = () => {
 
   return (
     <main className="admin-releases">
+      <BackButton />
       <section className="admin-releases__panel">
         <div className="admin-releases__top">
           <h1>Реестр релизов</h1>

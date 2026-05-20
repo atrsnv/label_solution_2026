@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { artistService } from '../../services/artistService';
 
 import './ArtistTracksRepository.scss';
+import BackButton from '../../components/BackButton/BackButton';
 
 const TRACK_STATUS_LABELS = {
   PENDING: 'Ожидает',
@@ -61,6 +62,7 @@ const ArtistTracksRepository = () => {
 
   return (
     <main className="artist-tracks">
+      <BackButton />
       <TracksHeader />
 
       <section className="artist-tracks__grid">

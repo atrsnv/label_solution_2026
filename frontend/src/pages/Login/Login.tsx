@@ -40,19 +40,6 @@ const Login: React.FC = () => {
     });
   };
 
-  const handleRoleChange = (role: UserRole) => {
-    setSelectedRole(role);
-    setError(null);
-
-    setSearchParams((prev) => {
-      const nextParams = new URLSearchParams(prev);
-
-      nextParams.set('role', role === 'ADMIN' ? 'admin' : 'artist');
-
-      return nextParams;
-    });
-  };
-
   const redirectByRole = (role: UserRole) => {
     if (role === 'ADMIN') {
       navigate('/admin', { replace: true });
@@ -122,26 +109,6 @@ const Login: React.FC = () => {
             Регистрация
           </button>
         </div>
-
-        {tab === 'login' && (
-          <div className="login-role-switch">
-            <button
-              type="button"
-              className={selectedRole === 'ARTIST' ? 'active' : ''}
-              onClick={() => handleRoleChange('ARTIST')}
-            >
-              Я артист
-            </button>
-
-            <button
-              type="button"
-              className={selectedRole === 'ADMIN' ? 'active' : ''}
-              onClick={() => handleRoleChange('ADMIN')}
-            >
-              Я администратор
-            </button>
-          </div>
-        )}
 
         {tab === 'register' && (
           <p className="login-hint">

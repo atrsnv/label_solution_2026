@@ -5,6 +5,7 @@ import { adminService } from '../../services/adminService';
 import type { AdminPayout } from '../../services/adminService';
 
 import './AdminPayouts.scss';
+import BackButton from '../../components/BackButton/BackButton';
 
 const STATUS_LABELS = { REQUESTED: 'Ожидает', APPROVED: 'Одобрено', REJECTED: 'Отклонено' } as const;
 const STATUS_CLASS  = { REQUESTED: 'pending', APPROVED: 'approved', REJECTED: 'rejected' } as const;
@@ -63,6 +64,7 @@ const AdminPayouts = () => {
 
   return (
     <main className="admin-payouts">
+      <BackButton />
       <h1>Заявки на вывод</h1>
 
       {pending.length === 0 && done.length === 0 && (

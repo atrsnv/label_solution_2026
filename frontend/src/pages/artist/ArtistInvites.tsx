@@ -4,6 +4,7 @@ import { artistService } from '../../services/artistService';
 import { trackService } from '../../services/trackService';
 
 import './ArtistInvites.scss';
+import BackButton from '../../components/BackButton/BackButton';
 
 type InviteStatus = 'PENDING' | 'DISPUTED';
 
@@ -95,6 +96,7 @@ const ArtistInvites = () => {
 
   return (
     <main className="artist-invites">
+      <BackButton />
       <h1>Приглашения</h1>
 
       <section className="artist-invites__list">

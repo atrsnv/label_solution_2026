@@ -1,0 +1,23 @@
+.back-button {
+  position: fixed;
+  left: 28px;
+  top: 96px;
+  z-index: 100;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  background: rgba(255, 255, 255, 0.035);
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  transform: none;
+  transition: 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.32);
+  }
+}
