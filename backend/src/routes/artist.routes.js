@@ -6,6 +6,7 @@ const router = Router();
 router.use(isAuth, isArtist);
 
 router.get('/dashboard', artist.dashboard);
+router.get('/analytics', artist.analytics);
 router.get('/tracks', artist.myTracks);
 router.get('/invites', artist.myInvites);
 router.get('/wallet', artist.wallet);

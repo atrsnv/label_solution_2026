@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma');
+const { addAmount, roundMoney } = require('../utils/analytics');
 
 // GET /api/artist/dashboard
 async function dashboard(req, res, next) {
@@ -23,6 +24,71 @@ async function dashboard(req, res, next) {
       approvedCount,
       totalEarned: totalEarned._sum.amount || 0,
       lastEarnings,
+    });
+  } catch (e) { next(e); }
+}
+
+// GET /api/artist/analytics — JSON-витрина для личного кабинета артиста
+async function analytics(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const [user, earnings, ownedTracksCount, approvedTracksCount] = await Promise.all([
+      prisma.user.findUnique({ where: { id: userId } }),
+      prisma.earning.findMany({
+        where: { userId },
+        orderBy: [{ period: 'asc' }, { createdAt: 'asc' }],
+        include: { track: { select: { id: true, title: true, releaseDate: true } } },
+      }),
+      prisma.track.count({ where: { ownerId: userId } }),
+      prisma.track.count({ where: { ownerId: userId, status: 'APPROVED' } }),
+    ]);
+
+    const byMonthMap = new Map();
+    const byTrackMap = new Map();
+
+    earnings.forEach((earning) => {
+      const period = earning.period || 'Без периода';
+      addAmount(byMonthMap, period, earning.amount, { period });
+
+      const trackTitle = earning.track?.title || 'Неизвестный трек';
+      addAmount(byTrackMap, earning.trackId, earning.amount, {
+        trackId: earning.trackId,
+        trackTitle,
+      });
+    });
+
+    const totalEarned = earnings.reduce((sum, earning) => sum + Number(earning.amount || 0), 0);
+    const byMonth = Array.from(byMonthMap.values()).map((item) => ({
+      ...item,
+      amount: roundMoney(item.amount),
+    }));
+    const byTrack = Array.from(byTrackMap.values())
+      .map((item) => ({ ...item, amount: roundMoney(item.amount) }))
+      .sort((a, b) => b.amount - a.amount);
+
+    res.json({
+      summary: {
+        artistName: user.name,
+        balance: roundMoney(user.balance),
+        totalEarned: roundMoney(totalEarned),
+        labelShare: user.labelShare,
+        tracksCount: ownedTracksCount,
+        approvedTracksCount,
+        earningsCount: earnings.length,
+      },
+      byMonth,
+      byTrack,
+      lastEarnings: earnings
+        .slice()
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 8)
+        .map((earning) => ({
+          id: earning.id,
+          trackTitle: earning.track?.title || 'Неизвестный трек',
+          period: earning.period || 'Без периода',
+          amount: roundMoney(earning.amount),
+          createdAt: earning.createdAt,
+        })),
     });
   } catch (e) { next(e); }
 }
@@ -104,4 +170,4 @@ async function requestWithdraw(req, res, next) {
   } catch (e) { next(e); }
 }
 
-module.exports = { dashboard, myTracks, myInvites, wallet, requestWithdraw };
+module.exports = { dashboard, analytics, myTracks, myInvites, wallet, requestWithdraw };

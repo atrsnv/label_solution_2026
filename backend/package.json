@@ -11,7 +11,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "seed": "node prisma/seed.js",
-    "datalens:sample": "node scripts/create-rich-datalens-data.js"
+    "test": "node --test"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0",
