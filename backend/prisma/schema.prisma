@@ -11,113 +11,43 @@ datasource db {
 }
 
 // SQLite не поддерживает enum: используем строки + комментарии-валидаторы.
-// Role:         "ADMIN" | "ARTIST"
-// TrackStatus:  "PENDING" | "APPROVED" | "ERROR"
-// SplitStatus:  "PENDING" | "ACCEPTED" | "DISPUTED"
-// PayoutStatus: "REQUESTED" | "PAID" | "REJECTED"
+// Role: "ADMIN" | "ARTIST"
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  password     String
-  name         String
-  role         String   @default("ARTIST")
-
-  // только для артистов: процент лейбла (0..100), который "съедается" с каждого трека
-  labelShare   Float    @default(30)
-  // текущий баланс артиста (доступный к выводу)
-  balance      Float    @default(0)
+  id                String   @id @default(cuid())
+  email             String   @unique
+  password          String
+  name              String
+  role              String   @default("ARTIST")
+  datalensArtistId  String?
+  payoutDetails     String?  // JSON: { type, fullName, bank, bik, account, phone }
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  // отношения
-  ownedTracks  Track[]    @relation("TrackOwner")
-  splits       Split[]
-  earnings     Earning[]
-  payouts      Payout[]
+  // только auth/onboarding
   invites      Invite[]   @relation("InviteCreator")
-}
-
-model Track {
-  id            String      @id @default(cuid())
-  title         String
-  coverUrl      String?
-  releaseDate   DateTime
-  status        String      @default("PENDING")
-
-  // снимок процента лейбла на момент создания (чтобы изменения не ломали историю)
-  labelShare    Float
-
-  ownerId       String
-  owner         User        @relation("TrackOwner", fields: [ownerId], references: [id])
-
-  splits        Split[]
-  earnings      Earning[]
-
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-
-  @@index([ownerId])
-}
-
-model Split {
-  id        String      @id @default(cuid())
-  trackId   String
-  userId    String      // участник (или сам автор, или приглашённый)
-  share     Float       // процент от "не-лейбловой" части (0..100)
-  status    String      @default("PENDING")
-
-  track     Track       @relation(fields: [trackId], references: [id], onDelete: Cascade)
-  user      User        @relation(fields: [userId], references: [id])
-
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-
-  @@unique([trackId, userId])
-  @@index([userId])
-}
-
-model Report {
-  id          String    @id @default(cuid())
-  filename    String
-  totalAmount Float     @default(0)
-  rowsCount   Int       @default(0)
-  createdAt   DateTime  @default(now())
-
-  earnings    Earning[]
-}
-
-model Earning {
-  id        String   @id @default(cuid())
-  trackId   String
-  userId    String
-  amount    Float
-  period    String?  // например "2025-04"
-  reportId  String?
-
-  track     Track    @relation(fields: [trackId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
-  report    Report?  @relation(fields: [reportId], references: [id])
-
-  createdAt DateTime @default(now())
-
-  @@index([userId])
-  @@index([trackId])
+  payouts      Payout[]
 }
 
 model Payout {
-  id        String       @id @default(cuid())
+  id        String   @id @default(cuid())
   userId    String
   amount    Float
-  status    String       @default("REQUESTED")
+  status    String   @default("REQUESTED") // REQUESTED | APPROVED | REJECTED
+  details   String?  // JSON snapshot of requisites at request time
+  comment   String?  // admin comment on approve/reject
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+}
 
-  user      User         @relation(fields: [userId], references: [id])
-
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-
-  @@index([userId])
+model Report {
+  id          String   @id @default(cuid())
+  filename    String
+  totalAmount Float    @default(0)
+  rowsCount   Int      @default(0)
+  createdAt   DateTime @default(now())
 }
 
 // Инвайт-ссылки / временные пароли для добавления артистов админом

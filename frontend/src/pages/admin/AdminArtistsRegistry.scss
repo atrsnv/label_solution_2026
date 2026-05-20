@@ -152,6 +152,13 @@
     font-weight: 800;
   }
 
+  &__status-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
   &__status {
     font-weight: 700;
 
@@ -161,6 +168,44 @@
 
     &--inactive {
       color: #ff5f5f;
+    }
+  }
+
+  &__delete-btn {
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 80, 80, 0.3);
+    background: transparent;
+    color: rgba(255, 80, 80, 0.6);
+    font-size: 0.7rem;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s, color 0.15s;
+
+    &:hover {
+      background: rgba(255, 80, 80, 0.15);
+      color: #ff5f5f;
+      border-color: rgba(255, 80, 80, 0.6);
+    }
+  }
+
+  &__row:hover &__delete-btn {
+    opacity: 1;
+  }
+
+  &__delete-confirm {
+    background: rgba(255, 80, 80, 0.18) !important;
+    border-color: rgba(255, 80, 80, 0.5) !important;
+    color: #ff7070 !important;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 80, 80, 0.3) !important;
     }
   }
 

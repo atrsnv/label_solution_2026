@@ -1,4 +1,4 @@
-import React, { type FormEvent, useEffect, useState } from 'react';
+import React, { type FormEvent, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { authService } from '../../services/authService';
@@ -26,14 +26,6 @@ const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const setSession = useAuthStore((state) => state.setSession);
-
-  useEffect(() => {
-    setTab(initialTab);
-  }, [initialTab]);
-
-  useEffect(() => {
-    setSelectedRole(initialRole);
-  }, [initialRole]);
 
   const handleTabChange = (nextTab: 'login' | 'register') => {
     setTab(nextTab);
@@ -98,9 +90,10 @@ const Login: React.FC = () => {
 
       setSession(response);
       redirectByRole(response.user.role);
-    } catch (requestError: any) {
+    } catch (requestError: unknown) {
+      const apiError = requestError as { response?: { data?: { error?: string } } };
       const message =
-        requestError.response?.data?.error ||
+        apiError.response?.data?.error ||
         'Не получилось выполнить запрос. Проверь данные и попробуй еще раз.';
 
       setError(message);

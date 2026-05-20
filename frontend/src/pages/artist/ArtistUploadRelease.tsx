@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,14 @@ type ExtraAuthor = {
   id: number;
   name: string;
   percent: number;
+};
+
+type ApiError = {
+  response?: {
+    data?: {
+      error?: string;
+    };
+  };
 };
 
 const DEFAULT_LABEL_BASE_PERCENT = 30;
@@ -75,7 +83,7 @@ const ArtistUploadRelease = () => {
   const [title, setTitle] = useState('');
   const [releaseDate, setReleaseDate] = useState('');
 
-  const [mainArtist, setMainArtist] = useState(user?.name || '');
+  const [mainArtist, setMainArtist] = useState('');
   const [mainArtistPercent, setMainArtistPercent] = useState(100);
 
   const [lyricsAuthor, setLyricsAuthor] = useState('');
@@ -90,12 +98,7 @@ const ArtistUploadRelease = () => {
 
   const labelBasePercent = user?.labelShare ?? DEFAULT_LABEL_BASE_PERCENT;
   const artistsPoolPercent = 100 - labelBasePercent;
-
-  useEffect(() => {
-    if (user?.name) {
-      setMainArtist(user.name);
-    }
-  }, [user?.name]);
+  const visibleMainArtist = mainArtist || user?.name || '';
 
   const usedSplitPercent = useMemo(() => {
     const extraPercent = extraAuthors.reduce(
@@ -277,9 +280,10 @@ const ArtistUploadRelease = () => {
     };
 
     createTrackMutation.mutate(payload, {
-      onError: (error: any) => {
+      onError: (error: unknown) => {
+        const apiError = error as ApiError;
         const message =
-          error.response?.data?.error ||
+          apiError.response?.data?.error ||
           'Не удалось отправить релиз. Проверь данные и попробуй еще раз.';
 
         setFormError(message);
@@ -428,7 +432,7 @@ const ArtistUploadRelease = () => {
                   <div className="artist-upload__input-row">
                     <input
                       type="text"
-                      value={mainArtist}
+                      value={visibleMainArtist}
                       onChange={(event) => setMainArtist(event.target.value)}
                     />
 

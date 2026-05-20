@@ -15,6 +15,14 @@ type FinanceReport = {
   createdAt: string;
 };
 
+type ApiError = {
+  response?: {
+    data?: {
+      error?: string;
+    };
+  };
+};
+
 const formatMoney = (value: number | string | null | undefined) => {
   const numericValue = Number(value || 0);
 
@@ -53,7 +61,9 @@ const AdminFinanceCenter = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['finance-reports'] });
       queryClient.invalidateQueries({ queryKey: ['admin-dashboard-summary'] });
-      queryClient.invalidateQueries({ queryKey: ['datalens-embed'] });
+      queryClient.invalidateQueries({ queryKey: ['native-analytics'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-artists'] });
+      queryClient.invalidateQueries({ queryKey: ['artist-dashboard'] });
     },
   });
 
@@ -84,14 +94,18 @@ const AdminFinanceCenter = () => {
     setUploadError(null);
 
     try {
+      let lastResult: { ok?: boolean; rowsCount?: number; totalAmount?: number } = {};
       for (const file of selectedFiles) {
-        await importReportMutation.mutateAsync(file);
+        lastResult = await importReportMutation.mutateAsync(file);
       }
 
+      const suffix = lastResult.totalAmount != null
+        ? ` Общая сумма: ${formatMoney(lastResult.totalAmount)}, строк: ${lastResult.rowsCount}.`
+        : '';
       setUploadMessage(
         selectedFiles.length === 1
-          ? 'Отчет успешно загружен и обработан.'
-          : `Отчеты успешно загружены и обработаны: ${selectedFiles.length}.`,
+          ? `Отчет успешно загружен и обработан.${suffix}`
+          : `Отчеты успешно загружены и обработаны: ${selectedFiles.length}.${suffix}`,
       );
 
       setSelectedFiles([]);
@@ -99,9 +113,10 @@ const AdminFinanceCenter = () => {
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
       const message =
-        error.response?.data?.error ||
+        apiError.response?.data?.error ||
         'Не удалось загрузить отчет. Проверь формат файла и попробуй еще раз.';
 
       setUploadError(message);
@@ -164,7 +179,7 @@ const AdminFinanceCenter = () => {
       </div>
 
       <DatalensPanel
-        title="DataLens аналитика"
+        title="Финансовая аналитика"
         className="admin-finance__datalens"
       />
 

@@ -1,29 +1,59 @@
 const prisma = require('../config/prisma');
-const { addAmount, roundMoney } = require('../utils/analytics');
+const config = require('../config');
+const { parseArtistIdMap } = require('../utils/datalens');
+const {
+  buildArtistDatalensTrackRegistry,
+  buildArtistDatalensDashboard,
+} = require('../utils/datalensDashboard');
+const { loadDatalensRows } = require('../services/datalensSource.service');
+const { isChartsModeAvailable, loadArtistChartsDashboard } = require('../services/datalensCharts.service');
+
+async function getCurrentUser(userId) {
+  return prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      role: true,
+      createdAt: true,
+      datalensArtistId: true,
+    },
+  });
+}
+
+async function buildCurrentArtistDashboard(user) {
+  if (!config.datalens.dataUrl && isChartsModeAvailable()) {
+    const chartsDashboard = await loadArtistChartsDashboard(user, parseArtistIdMap(config.datalens.artistIdMap));
+    if (chartsDashboard) return chartsDashboard;
+  }
+
+  const datalensRows = await loadDatalensRows('artist');
+  const datalens = buildArtistDatalensDashboard(
+    datalensRows.rows,
+    user,
+    parseArtistIdMap(config.datalens.artistIdMap),
+  );
+  datalens.source = datalensRows.source;
+  return datalens;
+}
 
 // GET /api/artist/dashboard
 async function dashboard(req, res, next) {
   try {
-    const userId = req.user.id;
-    const [user, tracksCount, approvedCount, totalEarned, lastEarnings] = await Promise.all([
-      prisma.user.findUnique({ where: { id: userId } }),
-      prisma.track.count({ where: { ownerId: userId } }),
-      prisma.track.count({ where: { ownerId: userId, status: 'APPROVED' } }),
-      prisma.earning.aggregate({ where: { userId }, _sum: { amount: true } }),
-      prisma.earning.findMany({
-        where: { userId },
-        orderBy: { createdAt: 'desc' },
-        take: 10,
-        include: { track: { select: { id: true, title: true } } },
-      }),
-    ]);
+    const user = await getCurrentUser(req.user.id);
+    const datalens = await buildCurrentArtistDashboard(user);
+
     res.json({
-      balance: user.balance,
-      labelShare: user.labelShare,
-      tracksCount,
-      approvedCount,
-      totalEarned: totalEarned._sum.amount || 0,
-      lastEarnings,
+      balance: datalens.summary.balance,
+      labelShare: datalens.summary.labelShare,
+      tracksCount: datalens.summary.tracksCount,
+      approvedCount: datalens.summary.approvedTracksCount,
+      totalEarned: datalens.summary.totalEarned,
+      totalStreams: datalens.summary.totalStreams,
+      datalensArtist: datalens.datalensArtist,
+      source: datalens.source,
+      lastEarnings: datalens.lastEarnings,
     });
   } catch (e) { next(e); }
 }
@@ -31,143 +61,62 @@ async function dashboard(req, res, next) {
 // GET /api/artist/analytics — JSON-витрина для личного кабинета артиста
 async function analytics(req, res, next) {
   try {
-    const userId = req.user.id;
-    const [user, earnings, ownedTracksCount, approvedTracksCount] = await Promise.all([
-      prisma.user.findUnique({ where: { id: userId } }),
-      prisma.earning.findMany({
-        where: { userId },
-        orderBy: [{ period: 'asc' }, { createdAt: 'asc' }],
-        include: { track: { select: { id: true, title: true, releaseDate: true } } },
-      }),
-      prisma.track.count({ where: { ownerId: userId } }),
-      prisma.track.count({ where: { ownerId: userId, status: 'APPROVED' } }),
-    ]);
-
-    const byMonthMap = new Map();
-    const byTrackMap = new Map();
-
-    earnings.forEach((earning) => {
-      const period = earning.period || 'Без периода';
-      addAmount(byMonthMap, period, earning.amount, { period });
-
-      const trackTitle = earning.track?.title || 'Неизвестный трек';
-      addAmount(byTrackMap, earning.trackId, earning.amount, {
-        trackId: earning.trackId,
-        trackTitle,
-      });
-    });
-
-    const totalEarned = earnings.reduce((sum, earning) => sum + Number(earning.amount || 0), 0);
-    const byMonth = Array.from(byMonthMap.values()).map((item) => ({
-      ...item,
-      amount: roundMoney(item.amount),
-    }));
-    const byTrack = Array.from(byTrackMap.values())
-      .map((item) => ({ ...item, amount: roundMoney(item.amount) }))
-      .sort((a, b) => b.amount - a.amount);
-
-    res.json({
-      summary: {
-        artistName: user.name,
-        balance: roundMoney(user.balance),
-        totalEarned: roundMoney(totalEarned),
-        labelShare: user.labelShare,
-        tracksCount: ownedTracksCount,
-        approvedTracksCount,
-        earningsCount: earnings.length,
-      },
-      byMonth,
-      byTrack,
-      lastEarnings: earnings
-        .slice()
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        .slice(0, 8)
-        .map((earning) => ({
-          id: earning.id,
-          trackTitle: earning.track?.title || 'Неизвестный трек',
-          period: earning.period || 'Без периода',
-          amount: roundMoney(earning.amount),
-          createdAt: earning.createdAt,
-        })),
-    });
+    const user = await getCurrentUser(req.user.id);
+    res.json(await buildCurrentArtistDashboard(user));
   } catch (e) { next(e); }
 }
 
-// GET /api/artist/tracks  — треки, где артист владелец
+// GET /api/artist/tracks
 async function myTracks(req, res, next) {
   try {
-    const tracks = await prisma.track.findMany({
-      where: { ownerId: req.user.id },
-      orderBy: { createdAt: 'desc' },
-      include: {
-        splits: { include: { user: { select: { id: true, name: true, email: true } } } },
-      },
+    const user = await getCurrentUser(req.user.id);
+    const datalensRows = await loadDatalensRows('artist');
+
+    res.json({
+      tracks: buildArtistDatalensTrackRegistry(
+        datalensRows.rows,
+        user,
+        parseArtistIdMap(config.datalens.artistIdMap),
+      ),
+      source: datalensRows.source,
     });
-    res.json({ tracks });
   } catch (e) { next(e); }
 }
 
-// GET /api/artist/invites  — треки, куда меня позвали на фит и я ещё не ответил/в споре
+// GET /api/artist/invites
 async function myInvites(req, res, next) {
   try {
-    const splits = await prisma.split.findMany({
-      where: {
-        userId: req.user.id,
-        status: { in: ['PENDING', 'DISPUTED'] },
-        track: { ownerId: { not: req.user.id } },
-      },
-      include: {
-        track: {
-          include: {
-            owner: { select: { id: true, name: true, email: true } },
-            splits: { include: { user: { select: { id: true, name: true, email: true } } } },
-          },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
+    res.json({
+      invites: [],
+      source: 'disabled-local-splits',
+      message: 'Локальные сплиты отключены: релизы и участники приходят из DataLens.',
     });
-    res.json({ invites: splits });
   } catch (e) { next(e); }
 }
 
 // GET /api/artist/wallet
 async function wallet(req, res, next) {
   try {
-    const userId = req.user.id;
-    const [user, earnings, payouts] = await Promise.all([
-      prisma.user.findUnique({ where: { id: userId } }),
-      prisma.earning.findMany({
-        where: { userId },
-        orderBy: { createdAt: 'desc' },
-        take: 100,
-        include: { track: { select: { id: true, title: true } } },
-      }),
-      prisma.payout.findMany({ where: { userId }, orderBy: { createdAt: 'desc' } }),
-    ]);
-    res.json({ balance: user.balance, earnings, payouts });
+    const user = await getCurrentUser(req.user.id);
+    const datalens = await buildCurrentArtistDashboard(user);
+
+    res.json({
+      balance: datalens.summary.balance,
+      totalEarned: datalens.summary.totalEarned,
+      deductedPayouts: 0,
+      earnings: datalens.lastEarnings,
+      payouts: [],
+      source: datalens.source,
+    });
   } catch (e) { next(e); }
 }
 
-// POST /api/artist/wallet/withdraw  { amount }
-async function requestWithdraw(req, res, next) {
-  try {
-    const amount = Number(req.body.amount);
-    if (!amount || amount <= 0) return res.status(400).json({ error: 'amount must be > 0' });
-
-    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-    if (amount > user.balance) return res.status(400).json({ error: 'Insufficient balance' });
-
-    const payout = await prisma.$transaction(async (tx) => {
-      await tx.user.update({
-        where: { id: user.id },
-        data: { balance: { decrement: amount } },
-      });
-      return tx.payout.create({
-        data: { userId: user.id, amount, status: 'REQUESTED' },
-      });
-    });
-    res.status(201).json({ payout });
-  } catch (e) { next(e); }
+// POST /api/artist/wallet/withdraw
+async function requestWithdraw(req, res) {
+  res.status(410).json({
+    error: 'Local payouts are disabled',
+    message: 'Заявки на выплаты больше не сохраняются в локальной БД. Источник выплат должен быть внешний ERP/DataLens-контур.',
+  });
 }
 
 module.exports = { dashboard, analytics, myTracks, myInvites, wallet, requestWithdraw };

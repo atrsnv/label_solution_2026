@@ -6,29 +6,30 @@ import { adminService, type AdminArtist } from '../../services/adminService';
 
 import './AdminArtistsRegistry.scss';
 
-type ArtistStatus = 'Активен' | 'Деактивен';
+type ArtistStatus = 'Активен' | 'Нет аккаунта';
 
 type Artist = {
   id: string;
   name: string;
   email: string;
   releases: number;
-  percent: string;
   status: ArtistStatus;
   avatar: string;
+  source: string;
+  hasAccount: boolean;
+  datalensArtistId: string | null;
 };
 
 type CreateArtistForm = {
   name: string;
   email: string;
   password: string;
-  labelShare: string;
 };
 
 type EditArtistForm = {
   name: string;
   email: string;
-  labelShare: string;
+  datalensArtistId: string;
 };
 
 type InviteForm = {
@@ -42,17 +43,24 @@ type CreatedInvite = {
   path?: string;
 };
 
+type ApiError = {
+  response?: {
+    data?: {
+      error?: string;
+    };
+  };
+};
+
 const DEFAULT_ARTIST_FORM: CreateArtistForm = {
   name: '',
   email: '',
   password: '',
-  labelShare: '30',
 };
 
 const DEFAULT_EDIT_ARTIST_FORM: EditArtistForm = {
   name: '',
   email: '',
-  labelShare: '30',
+  datalensArtistId: '',
 };
 
 const DEFAULT_INVITE_FORM: InviteForm = {
@@ -68,9 +76,11 @@ const mapArtistFromApi = (artist: AdminArtist): Artist => ({
   name: artist.name,
   email: artist.email,
   releases: artist._count?.ownedTracks ?? 0,
-  percent: String(artist.labelShare),
-  status: 'Активен',
+  status: artist.hasAccount === false ? 'Нет аккаунта' : 'Активен',
   avatar: getArtistAvatar(artist.name),
+  source: artist.source || 'ERP',
+  hasAccount: artist.hasAccount !== false,
+  datalensArtistId: artist.datalensArtistId ?? null,
 });
 
 const buildInviteUrl = (invite: CreatedInvite) => {
@@ -89,6 +99,8 @@ const AdminArtistsRegistry = () => {
   const [editArtistForm, setEditArtistForm] =
     useState<EditArtistForm>(DEFAULT_EDIT_ARTIST_FORM);
   const [editArtistError, setEditArtistError] = useState<string | null>(null);
+
+  const [deleteArtistId, setDeleteArtistId] = useState<string | null>(null);
 
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [inviteForm, setInviteForm] = useState<InviteForm>(DEFAULT_INVITE_FORM);
@@ -118,12 +130,12 @@ const AdminArtistsRegistry = () => {
     mutationFn: ({
       id,
       name,
-      labelShare,
+      datalensArtistId,
     }: {
       id: string;
       name: string;
-      labelShare: number;
-    }) => adminService.updateArtist(id, { name, labelShare }),
+      datalensArtistId?: string | null;
+    }) => adminService.updateArtist(id, { name, datalensArtistId }),
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-artists'] });
@@ -132,6 +144,21 @@ const AdminArtistsRegistry = () => {
       setSelectedArtistId(null);
       setEditArtistForm(DEFAULT_EDIT_ARTIST_FORM);
       setEditArtistError(null);
+    },
+  });
+
+  const deleteArtistMutation = useMutation({
+    mutationFn: adminService.deleteArtist,
+
+    onSuccess: (_data, deletedId) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-artists'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-dashboard-summary'] });
+      setDeleteArtistId(null);
+      if (selectedArtistId === deletedId) {
+        setSelectedArtistId(null);
+        setEditArtistForm(DEFAULT_EDIT_ARTIST_FORM);
+        setEditArtistError(null);
+      }
     },
   });
 
@@ -203,7 +230,7 @@ const AdminArtistsRegistry = () => {
     setEditArtistForm({
       name: artist.name,
       email: artist.email,
-      labelShare: artist.percent,
+      datalensArtistId: artist.datalensArtistId || '',
     });
   };
 
@@ -257,15 +284,9 @@ const AdminArtistsRegistry = () => {
     const name = createArtistForm.name.trim();
     const email = createArtistForm.email.trim().toLowerCase();
     const password = createArtistForm.password.trim();
-    const labelShare = Number(createArtistForm.labelShare);
 
     if (!name || !email || !password) {
       setCreateArtistError('Заполни имя, email и временный пароль.');
-      return;
-    }
-
-    if (Number.isNaN(labelShare) || labelShare < 0 || labelShare > 100) {
-      setCreateArtistError('Базовый процент должен быть числом от 0 до 100.');
       return;
     }
 
@@ -274,12 +295,12 @@ const AdminArtistsRegistry = () => {
         name,
         email,
         password,
-        labelShare,
       },
       {
-        onError: (error: any) => {
+        onError: (error: unknown) => {
+          const apiError = error as ApiError;
           const message =
-            error.response?.data?.error ||
+            apiError.response?.data?.error ||
             'Не удалось создать артиста. Проверь данные и попробуй еще раз.';
 
           setCreateArtistError(message);
@@ -296,15 +317,9 @@ const AdminArtistsRegistry = () => {
     setEditArtistError(null);
 
     const name = editArtistForm.name.trim();
-    const labelShare = Number(editArtistForm.labelShare);
 
     if (!name) {
       setEditArtistError('Имя артиста не может быть пустым.');
-      return;
-    }
-
-    if (Number.isNaN(labelShare) || labelShare < 0 || labelShare > 100) {
-      setEditArtistError('Базовый процент должен быть числом от 0 до 100.');
       return;
     }
 
@@ -312,12 +327,13 @@ const AdminArtistsRegistry = () => {
       {
         id: selectedArtist.id,
         name,
-        labelShare,
+        datalensArtistId: editArtistForm.datalensArtistId.trim() || null,
       },
       {
-        onError: (error: any) => {
+        onError: (error: unknown) => {
+          const apiError = error as ApiError;
           const message =
-            error.response?.data?.error ||
+            apiError.response?.data?.error ||
             'Не удалось обновить артиста. Проверь данные и попробуй еще раз.';
 
           setEditArtistError(message);
@@ -340,9 +356,10 @@ const AdminArtistsRegistry = () => {
         email: email || undefined,
       },
       {
-        onError: (error: any) => {
+        onError: (error: unknown) => {
+          const apiError = error as ApiError;
           const message =
-            error.response?.data?.error ||
+            apiError.response?.data?.error ||
             'Не удалось создать инвайт. Попробуй еще раз.';
 
           setInviteError(message);
@@ -371,6 +388,7 @@ const AdminArtistsRegistry = () => {
     const target = event.target as HTMLElement;
 
     if (target.closest('button')) return;
+    if (!artist.hasAccount) return;
 
     openEditArtistModal(artist);
   };
@@ -437,7 +455,7 @@ const AdminArtistsRegistry = () => {
                 <th>Артист</th>
                 <th>Электронная почта</th>
                 <th>Количество релизов</th>
-                <th>Базовый процент</th>
+                <th>Источник</th>
                 <th>Статус</th>
               </tr>
             </thead>
@@ -465,18 +483,29 @@ const AdminArtistsRegistry = () => {
 
                     <td>{artist.email}</td>
                     <td>{artist.releases}</td>
-                    <td>{artist.percent}%</td>
+                    <td>{artist.source}</td>
 
                     <td>
-                      <span
-                        className={
-                          artist.status === 'Активен'
-                            ? 'admin-artists__status admin-artists__status--active'
-                            : 'admin-artists__status admin-artists__status--inactive'
-                        }
-                      >
-                        {artist.status}
-                      </span>
+                      <div className="admin-artists__status-cell">
+                        <span
+                          className={
+                            artist.status === 'Активен'
+                              ? 'admin-artists__status admin-artists__status--active'
+                              : 'admin-artists__status admin-artists__status--inactive'
+                          }
+                        >
+                          {artist.status}
+                        </span>
+
+                        <button
+                          type="button"
+                          className="admin-artists__delete-btn"
+                          title="Удалить артиста"
+                          onClick={(e) => { e.stopPropagation(); setDeleteArtistId(artist.id); }}
+                        >
+                          ✕
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -539,22 +568,25 @@ const AdminArtistsRegistry = () => {
             </label>
 
             <p className="admin-artists__modal-hint">
-              Email сейчас нельзя изменить: backend обновляет только имя и базовый процент.
+              Email сейчас нельзя изменить: backend обновляет только имя auth-аккаунта.
             </p>
 
             <label className="admin-artists__modal-field">
-              <span>Базовый процент лейбла</span>
+              <span>DataLens Artist ID</span>
               <input
-                type="number"
-                min="0"
-                max="100"
-                value={editArtistForm.labelShare}
-                onFocus={(event) => event.target.select()}
+                type="text"
+                placeholder="Например: Instasamka или ART-01"
+                value={editArtistForm.datalensArtistId}
                 onChange={(event) =>
-                  handleEditArtistChange('labelShare', event.target.value)
+                  handleEditArtistChange('datalensArtistId', event.target.value)
                 }
               />
             </label>
+
+            <p className="admin-artists__modal-hint">
+              Значение поля artist_id из датасета DataLens. После сохранения артист
+              будет видеть только свои треки и доходы.
+            </p>
 
             {editArtistError && (
               <p className="admin-artists__modal-error">
@@ -636,20 +668,6 @@ const AdminArtistsRegistry = () => {
                 value={createArtistForm.password}
                 onChange={(event) =>
                   handleCreateArtistChange('password', event.target.value)
-                }
-              />
-            </label>
-
-            <label className="admin-artists__modal-field">
-              <span>Базовый процент лейбла</span>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={createArtistForm.labelShare}
-                onFocus={(event) => event.target.select()}
-                onChange={(event) =>
-                  handleCreateArtistChange('labelShare', event.target.value)
                 }
               />
             </label>
@@ -771,6 +789,60 @@ const AdminArtistsRegistry = () => {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {deleteArtistId && (
+        <div
+          className="admin-artists__modal-overlay"
+          onMouseDown={() => !deleteArtistMutation.isPending && setDeleteArtistId(null)}
+        >
+          <div
+            className="admin-artists__modal"
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <div className="admin-artists__modal-head">
+              <h2>Удалить артиста</h2>
+
+              <button
+                type="button"
+                className="admin-artists__modal-close"
+                onClick={() => setDeleteArtistId(null)}
+                disabled={deleteArtistMutation.isPending}
+              >
+                ×
+              </button>
+            </div>
+
+            <p className="admin-artists__modal-hint">
+              Аккаунт будет удалён безвозвратно. Данные DataLens не затрагиваются.
+            </p>
+
+            {deleteArtistMutation.isError && (
+              <p className="admin-artists__modal-error">
+                Не удалось удалить артиста. Попробуй ещё раз.
+              </p>
+            )}
+
+            <div className="admin-artists__modal-actions">
+              <button
+                type="button"
+                onClick={() => setDeleteArtistId(null)}
+                disabled={deleteArtistMutation.isPending}
+              >
+                Отмена
+              </button>
+
+              <button
+                type="button"
+                className="admin-artists__delete-confirm"
+                disabled={deleteArtistMutation.isPending}
+                onClick={() => deleteArtistMutation.mutate(deleteArtistId)}
+              >
+                {deleteArtistMutation.isPending ? 'Удаляем...' : 'Удалить'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </main>

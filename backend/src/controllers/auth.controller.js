@@ -17,8 +17,6 @@ function publicUser(u) {
     email: u.email,
     name: u.name,
     role: u.role,
-    labelShare: u.labelShare,
-    balance: u.balance,
   };
 }
 
@@ -66,7 +64,6 @@ async function registerByInvite(req, res, next) {
         password: hashed,
         name,
         role: 'ARTIST',
-        labelShare: config.defaultLabelShare,
       },
     });
 

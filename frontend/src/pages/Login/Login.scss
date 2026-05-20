@@ -1,5 +1,5 @@
 /* Login.scss */
-@import '../../styles/_variables.scss';
+@use '../../styles/variables' as *;
 
 .login-page {
   width: 100%;
