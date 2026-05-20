@@ -113,7 +113,7 @@ export const adminService = {
 
   updateArtist: async (
     id: string,
-    data: Partial<Pick<AdminArtist, 'labelShare' | 'name'>>,
+    data: Partial<Pick<AdminArtist, 'name'>>,
   ): Promise<{ artist: AdminArtist }> => {
     const response = await api.patch<{ artist: AdminArtist }>(`/admin/artists/${id}`, data);
 
@@ -124,7 +124,6 @@ export const adminService = {
     email: string;
     name: string;
     password: string;
-    labelShare?: number;
   }): Promise<{ artist: AdminArtist }> => {
     const response = await api.post<{ artist: AdminArtist }>('/admin/artists', data);
 

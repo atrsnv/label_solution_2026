@@ -13,7 +13,6 @@ type Artist = {
   name: string;
   email: string;
   releases: number;
-  percent: string;
   status: ArtistStatus;
   avatar: string;
   source: string;
@@ -24,13 +23,11 @@ type CreateArtistForm = {
   name: string;
   email: string;
   password: string;
-  labelShare: string;
 };
 
 type EditArtistForm = {
   name: string;
   email: string;
-  labelShare: string;
 };
 
 type InviteForm = {
@@ -56,13 +53,11 @@ const DEFAULT_ARTIST_FORM: CreateArtistForm = {
   name: '',
   email: '',
   password: '',
-  labelShare: '30',
 };
 
 const DEFAULT_EDIT_ARTIST_FORM: EditArtistForm = {
   name: '',
   email: '',
-  labelShare: '30',
 };
 
 const DEFAULT_INVITE_FORM: InviteForm = {
@@ -78,7 +73,6 @@ const mapArtistFromApi = (artist: AdminArtist): Artist => ({
   name: artist.name,
   email: artist.email,
   releases: artist._count?.ownedTracks ?? 0,
-  percent: String(artist.labelShare),
   status: artist.hasAccount === false ? 'Нет аккаунта' : 'Активен',
   avatar: getArtistAvatar(artist.name),
   source: artist.source || 'ERP',
@@ -130,12 +124,10 @@ const AdminArtistsRegistry = () => {
     mutationFn: ({
       id,
       name,
-      labelShare,
     }: {
       id: string;
       name: string;
-      labelShare: number;
-    }) => adminService.updateArtist(id, { name, labelShare }),
+    }) => adminService.updateArtist(id, { name }),
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-artists'] });
@@ -215,7 +207,6 @@ const AdminArtistsRegistry = () => {
     setEditArtistForm({
       name: artist.name,
       email: artist.email,
-      labelShare: artist.percent,
     });
   };
 
@@ -269,15 +260,9 @@ const AdminArtistsRegistry = () => {
     const name = createArtistForm.name.trim();
     const email = createArtistForm.email.trim().toLowerCase();
     const password = createArtistForm.password.trim();
-    const labelShare = Number(createArtistForm.labelShare);
 
     if (!name || !email || !password) {
       setCreateArtistError('Заполни имя, email и временный пароль.');
-      return;
-    }
-
-    if (Number.isNaN(labelShare) || labelShare < 0 || labelShare > 100) {
-      setCreateArtistError('Базовый процент должен быть числом от 0 до 100.');
       return;
     }
 
@@ -286,7 +271,6 @@ const AdminArtistsRegistry = () => {
         name,
         email,
         password,
-        labelShare,
       },
       {
         onError: (error: unknown) => {
@@ -309,15 +293,9 @@ const AdminArtistsRegistry = () => {
     setEditArtistError(null);
 
     const name = editArtistForm.name.trim();
-    const labelShare = Number(editArtistForm.labelShare);
 
     if (!name) {
       setEditArtistError('Имя артиста не может быть пустым.');
-      return;
-    }
-
-    if (Number.isNaN(labelShare) || labelShare < 0 || labelShare > 100) {
-      setEditArtistError('Базовый процент должен быть числом от 0 до 100.');
       return;
     }
 
@@ -325,7 +303,6 @@ const AdminArtistsRegistry = () => {
       {
         id: selectedArtist.id,
         name,
-        labelShare,
       },
       {
         onError: (error: unknown) => {
@@ -453,7 +430,6 @@ const AdminArtistsRegistry = () => {
                 <th>Артист</th>
                 <th>Электронная почта</th>
                 <th>Количество релизов</th>
-                <th>Базовый процент</th>
                 <th>Источник</th>
                 <th>Статус</th>
               </tr>
@@ -482,7 +458,6 @@ const AdminArtistsRegistry = () => {
 
                     <td>{artist.email}</td>
                     <td>{artist.releases}</td>
-                    <td>{artist.percent}%</td>
                     <td>{artist.source}</td>
 
                     <td>
@@ -557,22 +532,8 @@ const AdminArtistsRegistry = () => {
             </label>
 
             <p className="admin-artists__modal-hint">
-              Email сейчас нельзя изменить: backend обновляет только имя и базовый процент.
+              Email сейчас нельзя изменить: backend обновляет только имя auth-аккаунта.
             </p>
-
-            <label className="admin-artists__modal-field">
-              <span>Базовый процент лейбла</span>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={editArtistForm.labelShare}
-                onFocus={(event) => event.target.select()}
-                onChange={(event) =>
-                  handleEditArtistChange('labelShare', event.target.value)
-                }
-              />
-            </label>
 
             {editArtistError && (
               <p className="admin-artists__modal-error">
@@ -654,20 +615,6 @@ const AdminArtistsRegistry = () => {
                 value={createArtistForm.password}
                 onChange={(event) =>
                   handleCreateArtistChange('password', event.target.value)
-                }
-              />
-            </label>
-
-            <label className="admin-artists__modal-field">
-              <span>Базовый процент лейбла</span>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={createArtistForm.labelShare}
-                onFocus={(event) => event.target.select()}
-                onChange={(event) =>
-                  handleCreateArtistChange('labelShare', event.target.value)
                 }
               />
             </label>

@@ -183,8 +183,9 @@ const ArtistDashboard = () => {
       title: 'Всего заработано',
       value: formatMoney(dashboard.totalEarned),
       variant: 'green',
-      buttonText: 'Запросить вывод',
+      buttonText: 'Выплаты во внешнем контуре',
       meta: 'По данным DataLens',
+      disabled: true,
     },
     {
       title: 'Треков на площадках',
@@ -243,12 +244,12 @@ const ArtistDashboard = () => {
               <button
                 type="button"
                 className={
-                  stat.buttonText === 'Запросить вывод'
+                  !stat.disabled && stat.buttonText === 'Запросить вывод'
                     ? 'artist-dashboard__button artist-dashboard__button--glow'
                     : 'artist-dashboard__button'
                 }
                 onClick={
-                  stat.buttonText === 'Запросить вывод'
+                  !stat.disabled && stat.buttonText === 'Запросить вывод'
                     ? openWithdrawModal
                     : undefined
                 }

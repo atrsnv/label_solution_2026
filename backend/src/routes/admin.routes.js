@@ -1,6 +1,5 @@
 const { Router } = require('express');
 const { isAuth, isAdmin } = require('../middlewares/auth');
-const upload = require('../middlewares/upload');
 const admin = require('../controllers/admin.controller');
 const finance = require('../controllers/finance.controller');
 
@@ -24,7 +23,7 @@ router.patch('/artists/:id', admin.updateArtist);
 router.get('/tracks', admin.listAllTracks);
 
 // Finance
-router.post('/finance/import', upload.single('file'), finance.importReport);
+router.post('/finance/import', finance.importReport);
 router.get('/finance/reports', finance.listReports);
 router.get('/finance/reports/:id', finance.getReport);
 

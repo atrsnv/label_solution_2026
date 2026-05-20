@@ -242,11 +242,11 @@ function buildDatalensArtistRegistry(rows, users, artistIdMap = {}) {
       id: localUser?.id || `dl-${artist.artistId}`,
       email: localUser?.email || 'Нет аккаунта в ERP',
       name: artist.artistName,
-      labelShare: localUser?.labelShare ?? 30,
+      labelShare: 0,
       balance: roundMoney(artist.amount),
       createdAt: localUser?.createdAt || null,
       datalensArtistId: artist.artistId,
-      source: localUser ? 'ERP + DataLens' : 'DataLens',
+      source: localUser ? 'Auth + DataLens' : 'DataLens',
       hasAccount: Boolean(localUser),
       _count: { ownedTracks: artist.tracks.size },
     };
@@ -262,13 +262,13 @@ function buildDatalensArtistRegistry(rows, users, artistIdMap = {}) {
         id: user.id,
         email: user.email,
         name: user.name,
-        labelShare: user.labelShare,
-        balance: user.balance,
+        labelShare: 0,
+        balance: 0,
         createdAt: user.createdAt,
         datalensArtistId: null,
-        source: 'ERP',
+        source: 'Auth only',
         hasAccount: true,
-        _count: user._count || { ownedTracks: 0 },
+        _count: { ownedTracks: 0 },
       });
     });
 
@@ -279,7 +279,7 @@ function buildDatalensArtistRegistry(rows, users, artistIdMap = {}) {
   });
 }
 
-function buildDatalensTrackRegistry(rows, localTracks = []) {
+function buildDatalensTrackRegistry(rows) {
   const tracks = new Map();
 
   rows.forEach((row) => {
@@ -315,9 +315,6 @@ function buildDatalensTrackRegistry(rows, localTracks = []) {
   });
 
   const registry = Array.from(tracks.values()).map((track) => {
-    const localTrack = localTracks.find(
-      (item) => normalizeName(item.title) === normalizeName(track.title),
-    );
     const owner = Array.from(track.artists.values())
       .find((artist) => artist.role === 'Автор')
       || Array.from(track.artists.values())[0]
@@ -325,26 +322,9 @@ function buildDatalensTrackRegistry(rows, localTracks = []) {
 
     return {
       ...track,
-      id: localTrack?.id || track.id,
-      releaseDate: localTrack?.releaseDate || track.releaseDate,
-      createdAt: localTrack?.createdAt || track.createdAt,
-      status: localTrack?.status || track.status,
-      labelShare: localTrack?.labelShare || track.labelShare,
-      source: localTrack ? 'ERP + DataLens' : track.source,
-      owner: localTrack?.owner || owner,
-      splits: localTrack?.splits || [],
+      owner,
+      splits: [],
     };
-  });
-
-  localTracks.forEach((track) => {
-    const alreadyIncluded = registry.some((item) => item.id === track.id);
-    if (alreadyIncluded) return;
-
-    registry.push({
-      ...track,
-      datalensTrackId: null,
-      source: 'ERP',
-    });
   });
 
   return registry.sort((first, second) => {
@@ -352,13 +332,9 @@ function buildDatalensTrackRegistry(rows, localTracks = []) {
   });
 }
 
-function buildArtistDatalensTrackRegistry(rows, user, artistIdMap = {}, localTracks = []) {
+function buildArtistDatalensTrackRegistry(rows, user, artistIdMap = {}) {
   const artistRows = resolveArtistRows(rows, user, artistIdMap);
-  const datalensTracks = buildDatalensTrackRegistry(artistRows, []);
-  const userLocalTracks = localTracks.filter((track) => track.ownerId === user.id);
-  const merged = buildDatalensTrackRegistry(artistRows, userLocalTracks);
-
-  return merged.length ? merged : datalensTracks;
+  return buildDatalensTrackRegistry(artistRows);
 }
 
 function buildArtistDatalensDashboard(rows, user, artistIdMap = {}) {
@@ -407,7 +383,7 @@ function buildArtistDatalensDashboard(rows, user, artistIdMap = {}) {
       datalensArtistName: datalensArtist?.artistName || user.name,
       balance: roundMoney(totalEarned),
       totalEarned: roundMoney(totalEarned),
-      labelShare: user.labelShare,
+      labelShare: 0,
       tracksCount: tracks.size,
       approvedTracksCount: tracks.size,
       earningsCount: artistRows.length,

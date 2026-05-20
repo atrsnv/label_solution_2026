@@ -49,7 +49,7 @@ test('buildArtistDatalensDashboard filters rows by mapped DataLens artist id', (
 
   const dashboard = buildArtistDatalensDashboard(
     rows,
-    { email: 'local@label.local', name: 'Local Name', labelShare: 30 },
+    { email: 'local@label.local', name: 'Local Name' },
     { 'local@label.local': 'ART-2' },
   );
 
@@ -69,7 +69,7 @@ test('buildArtistDatalensDashboard matches compact email login to spaced artist 
 
   const dashboard = buildArtistDatalensDashboard(
     rows,
-    { email: 'sodaluv@label.local', name: 'sodaluv', labelShare: 30 },
+    { email: 'sodaluv@label.local', name: 'sodaluv' },
     {},
   );
 
@@ -91,27 +91,17 @@ test('buildDatalensArtistRegistry includes artists that only exist in DataLens',
   assert.equal(artists[0]._count.ownedTracks, 1);
 });
 
-test('buildDatalensTrackRegistry merges DataLens tracks with local overlay', () => {
+test('buildDatalensTrackRegistry returns DataLens tracks without local overlay', () => {
   const rows = parseDatalensCsv([
     'transaction_id,date,track_id,track_title,artist_id,artist_name,role,income_type,source,revenue_gross,revenue_net,streams',
     'TX-1,2026-03-01,TRK-1,Song,ART-1,Artist One,Автор,Стриминг,Яндекс Музыка,100,70,1000',
   ].join('\n'));
-  const localTrack = {
-    id: 'local-track',
-    title: 'Song',
-    createdAt: new Date('2026-02-01'),
-    releaseDate: new Date('2026-02-01'),
-    status: 'PENDING',
-    labelShare: 25,
-    owner: { id: 'user-1', name: 'Local Artist', email: 'artist@label.local' },
-    splits: [],
-  };
 
-  const tracks = buildDatalensTrackRegistry(rows, [localTrack]);
+  const tracks = buildDatalensTrackRegistry(rows);
 
-  assert.equal(tracks[0].id, 'local-track');
-  assert.equal(tracks[0].source, 'ERP + DataLens');
-  assert.equal(tracks[0].status, 'PENDING');
+  assert.equal(tracks[0].id, 'dl-TRK-1');
+  assert.equal(tracks[0].source, 'DataLens');
+  assert.equal(tracks[0].status, 'APPROVED');
 });
 
 test('buildArtistDatalensTrackRegistry shows mapped DataLens releases', () => {
@@ -124,7 +114,6 @@ test('buildArtistDatalensTrackRegistry shows mapped DataLens releases', () => {
     rows,
     { id: 'user-1', email: 'local@label.local', name: 'Local Artist' },
     { 'local@label.local': 'ART-1' },
-    [],
   );
 
   assert.equal(tracks[0].title, 'Song');

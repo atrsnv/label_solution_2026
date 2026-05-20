@@ -5,7 +5,6 @@ const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   jwtSecret: process.env.JWT_SECRET || 'dev_secret_change_me',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
-  defaultLabelShare: parseFloat(process.env.DEFAULT_LABEL_SHARE || '30'),
   datalens: {
     iamToken: process.env.DATALENS_IAM_TOKEN || '',
     orgId: process.env.DATALENS_ORG_ID || '',
