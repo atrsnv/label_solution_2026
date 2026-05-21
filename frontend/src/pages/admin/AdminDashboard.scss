@@ -1,0 +1,139 @@
+@use '../../styles/variables' as *;
+@use '../../styles/cabinet' as *;
+
+.admin-dashboard {
+  @include cab-container;
+
+  &__hero {
+    @include cab-hero;
+
+    p { text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px; }
+  }
+
+  &__hero-badge {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.65);
+    font-family: $font-third;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  &__message {
+    @include cab-message;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 22px;
+    min-height: 200px;
+    padding: 24px 26px;
+    border-radius: $radius-lg;
+    border: 1px solid $border;
+    background:
+      radial-gradient(circle at top right, rgba(255, 255, 255, 0.025), transparent 50%),
+      $section-bg;
+    box-sizing: border-box;
+    transition: border-color 0.2s, transform 0.2s, background 0.2s;
+
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
+    }
+
+    &--yellow {
+      strong { color: #ffd47a; }
+    }
+
+    &--green {
+      strong { color: #8ef19b; }
+    }
+
+    &--highlight {
+      border-color: rgba(255, 193, 77, 0.28);
+      background:
+        radial-gradient(circle at top right, rgba(255, 193, 77, 0.08), transparent 55%),
+        $section-bg;
+
+      strong { color: #ffd47a; font-size: 16px !important; font-weight: 600 !important; }
+
+      .admin-dashboard__card-btn {
+        border-color: rgba(255, 193, 77, 0.5);
+        color: #ffd47a;
+        background: rgba(255, 193, 77, 0.06);
+
+        &:hover {
+          background: rgba(255, 193, 77, 0.13);
+          border-color: rgba(255, 193, 77, 0.7);
+        }
+      }
+    }
+  }
+
+  &__card-top {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.5);
+      font-family: $font-third;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    strong {
+      color: $white;
+      font-family: $font-secondary;
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+    }
+
+    span {
+      color: rgba(255, 255, 255, 0.4);
+      font-family: $font-third;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+  }
+
+  &__card-btn {
+    @include cab-btn-primary;
+    min-width: 0;
+    width: 100%;
+
+    i {
+      font-style: normal;
+      font-size: 18px;
+      line-height: 1;
+      transform: translateY(-1px);
+    }
+  }
+}

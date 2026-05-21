@@ -1,0 +1,33 @@
+# Server
+PORT=4000
+NODE_ENV=development
+
+# JWT
+JWT_SECRET=super_secret_change_me
+JWT_EXPIRES_IN=7d
+
+# Database (SQLite for hackathon; switch to PostgreSQL for prod / DataLens)
+DATABASE_URL="file:./dev.db"
+
+# Default label share for new artists (percent, 0..100)
+DATALENS_BASE_URL=https://api.datalens.tech
+DATALENS_DATA_URL=
+DATALENS_ALLOW_LOCAL_FALLBACK=false
+DATALENS_DATA_FILE_PATH=
+DATALENS_IAM_TOKEN=t1.9euelZqTkIvLmJOQiZyJyZTHlcqXie3rnpWayYmWlp2Si5nKm8ybyM2RmZ3l9PdlUUgv-e8RA2Hi3fT3JQBGL_nvEQNh4s3n9euelZrGlZ2Wl8aRxprOkpOLjpXJju_8xeuelZrGlZ2Wl8aRxprOkpOLjpXJjg.ouaWNZNJY-cuj71SrtsMTTj2X_RHF4AHRPYffb0-gCAi12rzSO5r2HvdCMPWpTwv9wsG3ekqLihHX6aKxbTSBg
+DATALENS_ORG_ID=bpfl2in9s6u7h8ovstpq
+DATALENS_ENTRY_ID=p3unf63zsrh29
+DATALENS_LABEL_ID=cmp8jx1nt0004ecgy5w1h3pri
+DATALENS_LABEL_PARAM=labelId
+DATALENS_PUBLIC_URL=
+DATALENS_PRIVATE_KEY_PATH=./secrets/private_key.pem
+DATALENS_TOKEN_TTL_SECONDS=360
+DATALENS_EMBED_ID=bpg91t90myw6v
+DATALENS_ENABLE_PARAMS=true
+DATALENS_EMBED_BASE_URL=https://datalens.ru
+DATALENS_ARTIST_PARAM=artist_id
+DATALENS_ARTIST_ID_MAP=instasamka@label.local:ART-01,sodaluv@label.local:ART-02,morgenshtern@label.local:ART-03,masha@label.local:ART-04,nikita@label.local:ART-05,anna@label.local:ART-06
+DATALENS_ADMIN_ENTRY_ID=2gcwwkkpywl4m
+DATALENS_ADMIN_EMBED_ID=2gkxf7eygii0m
+DATALENS_ARTIST_ENTRY_ID=wa62zuya2y4sg
+DATALENS_ARTIST_EMBED_ID=0eivhatp50rsk

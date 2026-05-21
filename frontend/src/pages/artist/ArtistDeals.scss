@@ -1,0 +1,100 @@
+@use '../../styles/variables' as *;
+@use '../../styles/cabinet' as *;
+
+.artist-deals {
+  @include cab-container;
+
+  &__header {
+    @include cab-hero;
+    align-items: center;
+
+    h1 {
+      margin: 0;
+      font-family: $font-secondary;
+      font-size: 24px;
+      font-weight: 700;
+    }
+  }
+
+  &__back {
+    flex: 0 0 auto;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.6);
+    font-family: $font-third;
+    font-size: 12px;
+    text-decoration: none;
+    transition: 0.15s;
+
+    &:hover { background: rgba(255, 255, 255, 0.08); color: $white; }
+  }
+
+  &__message { @include cab-message; }
+
+  &__summary {
+    @include cab-panel;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    padding: 18px 24px;
+    border-color: rgba(255, 193, 77, 0.18);
+    background:
+      radial-gradient(circle at top right, rgba(255, 193, 77, 0.08), transparent 50%),
+      $section-bg;
+
+    span {
+      color: rgba(255, 255, 255, 0.55);
+      font-family: $font-third;
+      font-size: 13px;
+    }
+
+    strong {
+      color: #ffd47a;
+      font-family: $font-secondary;
+      font-size: 22px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  &__table-wrapper {
+    @include cab-table-wrapper;
+
+    table {
+      @include cab-table;
+      min-width: 820px;
+    }
+  }
+
+  &__org {
+    color: #ffd47a;
+    font-weight: 500;
+  }
+
+  &__amount {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    color: $white;
+
+    &--earned {
+      color: #8ef19b;
+      font-weight: 700;
+    }
+  }
+
+  &__comment {
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-size: 12px;
+    max-width: 200px;
+  }
+
+  &__empty {
+    padding: 36px 0 !important;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4) !important;
+  }
+}

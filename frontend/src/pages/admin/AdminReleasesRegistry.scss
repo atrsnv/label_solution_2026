@@ -1,0 +1,117 @@
+@use '../../styles/variables' as *;
+@use '../../styles/cabinet' as *;
+
+.admin-releases {
+  @include cab-container;
+
+  &__panel {
+    @include cab-panel;
+  }
+
+  &__top {
+    @include cab-panel-head;
+  }
+
+  &__filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__filter {
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.6);
+    font-family: $font-third;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: $white;
+    }
+
+    &--active {
+      background: rgba(255, 255, 255, 0.1);
+      color: $white;
+      border-color: rgba(255, 255, 255, 0.22);
+    }
+
+    &--approved.admin-releases__filter--active {
+      background: rgba(118, 245, 166, 0.12);
+      border-color: rgba(118, 245, 166, 0.32);
+      color: #8ef19b;
+    }
+
+    &--pending.admin-releases__filter--active {
+      background: rgba(255, 193, 77, 0.12);
+      border-color: rgba(255, 193, 77, 0.32);
+      color: #ffd47a;
+    }
+
+    &--error.admin-releases__filter--active {
+      background: rgba(255, 107, 107, 0.12);
+      border-color: rgba(255, 107, 107, 0.32);
+      color: #ff8b8b;
+    }
+  }
+
+  &__message {
+    @include cab-message;
+  }
+
+  &__table-wrapper {
+    @include cab-table-wrapper;
+
+    table {
+      @include cab-table;
+      min-width: 760px;
+    }
+  }
+
+  &__artist {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    span {
+      color: $white;
+      font-weight: 500;
+    }
+  }
+
+  &__cover {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: $radius-sm;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.04)),
+      $jet-black;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: $white;
+    font-family: $font-secondary;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  &__status {
+    &--approved { @include cab-status-success; }
+    &--pending { @include cab-status-pending; }
+    &--error { @include cab-status-error; }
+  }
+
+  &__empty {
+    padding: 36px 0 !important;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4) !important;
+  }
+}

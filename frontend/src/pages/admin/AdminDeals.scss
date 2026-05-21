@@ -1,0 +1,145 @@
+@use '../../styles/variables' as *;
+@use '../../styles/cabinet' as *;
+
+.admin-deals {
+  @include cab-container;
+
+  &__panel {
+    @include cab-panel;
+  }
+
+  &__top {
+    @include cab-panel-head;
+
+    h1 {
+      font-size: 22px;
+    }
+  }
+
+  &__create-btn {
+    @include cab-btn-accent;
+  }
+
+  &__message {
+    @include cab-message;
+  }
+
+  &__table-wrapper {
+    @include cab-table-wrapper;
+
+    table {
+      @include cab-table;
+      min-width: 940px;
+    }
+  }
+
+  &__org {
+    color: $white;
+    font-weight: 500;
+  }
+
+  &__amount {
+    color: $white;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+
+    &--artist { color: #ffd47a; }
+    &--label { color: #8ef19b; }
+  }
+
+  &__comment {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 13px;
+    max-width: 200px;
+  }
+
+  &__empty {
+    padding: 36px 0 !important;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4) !important;
+  }
+
+  // === Модалка ===
+  &__overlay { @include cab-modal-overlay; }
+  &__modal { @include cab-modal; }
+
+  &__modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+    h2 {
+      margin: 0;
+      font-family: $font-secondary;
+      font-size: 18px;
+      font-weight: 700;
+      color: $white;
+    }
+  }
+
+  &__modal-close {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.15s;
+
+    &:hover { background: rgba(255, 255, 255, 0.06); color: $white; }
+  }
+
+  &__field {
+    @include cab-field;
+
+    strong { color: #ffd47a; font-weight: 700; }
+
+    input[type='range'] {
+      padding: 0;
+      border: none;
+      background: none;
+      accent-color: #ffc14d;
+      cursor: pointer;
+    }
+  }
+
+  &__preview {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    border-radius: $radius-md;
+    border: 1px solid rgba(255, 193, 77, 0.18);
+    background: rgba(255, 193, 77, 0.06);
+    font-family: $font-third;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+
+    strong { color: #ffd47a; font-weight: 700; }
+  }
+
+  &__error { @include cab-error; }
+
+  &__modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+
+    button {
+      @include cab-btn-ghost;
+    }
+  }
+
+  &__submit {
+    @include cab-btn-accent;
+    min-width: 0 !important;
+  }
+}

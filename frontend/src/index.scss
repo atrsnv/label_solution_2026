@@ -1,0 +1,30 @@
+@use './styles/variables' as *;
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  font-family: $font-main;
+  color: $white;
+  background: linear-gradient(90deg, #101010 0%, #1A1A1A 50%, #101010 100%);
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@font-face {
+  font-family: 'TikTok Sans';
+  src: url('./assets/fonts/TikTokSans-VF-v3.3.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}

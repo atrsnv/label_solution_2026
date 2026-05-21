@@ -1,0 +1,233 @@
+@use '../../styles/variables' as *;
+@use '../../styles/cabinet' as *;
+
+.admin-finance {
+  @include cab-container;
+
+  &__upload {
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 24px;
+    border-radius: $radius-lg;
+    border: 1.5px dashed rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.018);
+    color: rgba(255, 255, 255, 0.55);
+    cursor: pointer;
+    transition: 0.2s;
+    box-sizing: border-box;
+
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.04);
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    input { display: none; }
+  }
+
+  &__upload-icon {
+    position: relative;
+    width: 38px;
+    height: 32px;
+    margin-bottom: 6px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 30px;
+      height: 12px;
+      border: 2.5px solid currentColor;
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      transform: translateX(-50%);
+      opacity: 0.5;
+    }
+
+    &::after {
+      content: '↑';
+      position: absolute;
+      left: 50%;
+      top: -8px;
+      font-size: 2rem;
+      line-height: 1;
+      font-weight: 500;
+      transform: translateX(-50%);
+    }
+  }
+
+  &__upload-text {
+    font-family: $font-third;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  &__upload-subtext {
+    font-family: $font-third;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  &__upload-count {
+    margin-top: 4px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    font-family: $font-third;
+    font-size: 12px;
+    color: $white;
+  }
+
+  &__upload-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  &__upload-button {
+    @include cab-btn-primary;
+  }
+
+  &__upload-message {
+    margin: 0;
+    font-size: 13px;
+    font-family: $font-third;
+
+    &--success { color: #8ef19b; }
+    &--error { color: #ff8b8b; }
+  }
+
+  &__datalens {
+    min-height: 420px;
+  }
+
+  &__panel {
+    @include cab-panel;
+  }
+
+  &__top {
+    @include cab-panel-head;
+  }
+
+  &__deal-button {
+    @include cab-btn-accent;
+  }
+
+  &__message {
+    @include cab-message;
+  }
+
+  &__panel {
+    overflow-x: auto;
+
+    table {
+      @include cab-table;
+      width: 100%;
+      min-width: 720px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: $radius-md;
+      background: rgba(255, 255, 255, 0.015);
+      overflow: hidden;
+    }
+  }
+
+  &__empty {
+    padding: 36px 0 !important;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4) !important;
+  }
+
+  &__status {
+    &--paid { @include cab-status-success; }
+    &--pending { @include cab-status-pending; }
+  }
+
+  // === Модалка прямой сделки ===
+  &__deal-overlay { @include cab-modal-overlay; }
+  &__deal-modal { @include cab-modal; }
+
+  &__deal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+    h2 {
+      margin: 0;
+      font-family: $font-secondary;
+      font-size: 18px;
+      font-weight: 700;
+      color: $white;
+    }
+  }
+
+  &__deal-close {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.15s;
+
+    &:hover { background: rgba(255, 255, 255, 0.06); color: $white; }
+  }
+
+  &__deal-field {
+    @include cab-field;
+
+    strong { color: #ffd47a; font-weight: 700; }
+
+    input[type='range'] {
+      padding: 0;
+      border: none;
+      background: none;
+      accent-color: #ffc14d;
+      cursor: pointer;
+    }
+  }
+
+  &__deal-preview {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    border-radius: $radius-md;
+    border: 1px solid rgba(255, 193, 77, 0.18);
+    background: rgba(255, 193, 77, 0.06);
+    font-family: $font-third;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+
+    strong { color: #ffd47a; font-weight: 700; }
+  }
+
+  &__deal-error { @include cab-error; }
+
+  &__deal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+
+    button {
+      @include cab-btn-ghost;
+    }
+  }
+
+  &__deal-submit {
+    @include cab-btn-accent;
+    min-width: 0 !important;
+  }
+}

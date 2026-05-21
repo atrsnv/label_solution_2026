@@ -1,0 +1,238 @@
+@use '../../styles/variables' as *;
+@use '../../styles/cabinet' as *;
+
+.admin-artists {
+  @include cab-container;
+
+  &__panel {
+    @include cab-panel;
+  }
+
+  &__top {
+    @include cab-panel-head;
+  }
+
+  &__top-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  &__add-button {
+    @include cab-btn-primary;
+    min-width: 0;
+    padding: 9px 18px;
+    font-size: 13px;
+  }
+
+  &__message {
+    @include cab-message;
+  }
+
+  &__table-wrapper {
+    @include cab-table-wrapper;
+
+    table {
+      @include cab-table;
+      min-width: 720px;
+    }
+  }
+
+  &__row {
+    cursor: pointer;
+    &--active td { background: rgba(255, 255, 255, 0.04); }
+  }
+
+  &__artist {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    span {
+      color: $white;
+      font-weight: 500;
+    }
+  }
+
+  &__avatar {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.04)),
+      $jet-black;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: $white;
+    font-family: $font-secondary;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  &__status-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  &__status {
+    &--active { @include cab-status-success; }
+    &--inactive { @include cab-status-neutral; }
+  }
+
+  &__delete-btn {
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.15s;
+
+    &:hover {
+      border-color: rgba(255, 107, 107, 0.4);
+      color: #ff8b8b;
+      background: rgba(255, 107, 107, 0.08);
+    }
+  }
+
+  &__empty {
+    padding: 36px 0 !important;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4) !important;
+  }
+
+  // === Модалки ===
+  &__modal-overlay { @include cab-modal-overlay; }
+  &__modal { @include cab-modal; }
+
+  &__modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+    h2 {
+      margin: 0;
+      font-family: $font-secondary;
+      font-size: 18px;
+      font-weight: 700;
+      color: $white;
+    }
+  }
+
+  &__modal-close {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    transition: 0.15s;
+
+    &:hover { background: rgba(255, 255, 255, 0.06); color: $white; }
+  }
+
+  &__modal-field { @include cab-field; }
+  &__modal-hint { @include cab-hint; }
+  &__modal-error { @include cab-error; }
+
+  &__modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 8px;
+
+    button {
+      @include cab-btn-ghost;
+
+      &[type='submit'] {
+        @include cab-btn-accent;
+        min-width: 0;
+      }
+    }
+  }
+
+  &__delete-confirm {
+    border-color: rgba(255, 107, 107, 0.4) !important;
+    color: #ff8b8b !important;
+    background: rgba(255, 107, 107, 0.08) !important;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 107, 107, 0.15) !important;
+      border-color: rgba(255, 107, 107, 0.6) !important;
+    }
+  }
+
+  &__invite-result {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 16px;
+    border-radius: $radius-md;
+    border: 1px solid rgba(118, 245, 166, 0.18);
+    background: rgba(118, 245, 166, 0.05);
+
+    span {
+      font-family: $font-third;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    code {
+      padding: 8px 10px;
+      border-radius: $radius-sm;
+      background: rgba(0, 0, 0, 0.32);
+      color: #8ef19b;
+      font-family: ui-monospace, 'JetBrains Mono', monospace;
+      font-size: 12px;
+      word-break: break-all;
+    }
+
+    p {
+      margin: 0;
+      font-family: $font-third;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.55);
+    }
+  }
+
+  &__copy-button {
+    align-self: flex-start;
+    margin-top: 4px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(118, 245, 166, 0.3);
+    background: rgba(118, 245, 166, 0.06);
+    color: #8ef19b;
+    font-family: $font-third;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.15s;
+
+    &:hover { background: rgba(118, 245, 166, 0.12); border-color: rgba(118, 245, 166, 0.5); }
+  }
+
+  &__copy-message {
+    margin: 0;
+    font-size: 12px;
+    color: #8ef19b;
+    font-family: $font-third;
+  }
+}

@@ -1,0 +1,445 @@
+{
+  "DL": {
+    "deviceType": "desktop",
+    "requestId": "f77e1a8b-5b61-4938-8a67-97c8fd980814",
+    "env": "production",
+    "installationType": "external",
+    "serviceName": "Yandex DataLens",
+    "user": {
+      "lang": "ru",
+      "avatarHost": "https://avatars.mds.yandex.net",
+      "passportHost": "https://passport.yandex.ru"
+    },
+    "userSettings": {
+      "language": "ru"
+    },
+    "iamUserId": "",
+    "clouds": [],
+    "endpoints": {
+      "passportHost": "https://passport.yandex.ru",
+      "extPassportOAuth": "https://oauth.yandex.ru",
+      "intPassportOAuth": "https://oauth.yandex-team.ru",
+      "avatarHost": "https://avatars.mds.yandex.net",
+      "oauth": "https://auth.yandex.cloud",
+      "objectStorage": "https://storage.yandexcloud.net",
+      "gateway": "/gateway",
+      "charts": "/charts",
+      "connections": "/connections",
+      "dataset": "/datasets",
+      "wizard": "/wizard",
+      "ql": "/ql",
+      "editor": "/editor",
+      "dash": "/dashboards",
+      "navigation": "/navigation",
+      "widgets": "/widgets",
+      "marketplace": "/marketplace",
+      "preview": "/preview",
+      "serviceSettings": "/settings",
+      "reports": "/reports",
+      "backoffice": "https://backoffice.yandex.cloud",
+      "billing": "https://billing.yandex.cloud",
+      "datalens": "https://datalens.ru",
+      "org": "https://org.yandex.cloud",
+      "cloud": "https://yandex.cloud",
+      "console": "https://console.yandex.cloud",
+      "monitoring": "https://monitoring.yandex.cloud",
+      "statusboard": "https://status.yandex.cloud",
+      "support": "https://support.yandex.cloud",
+      "navigationSourceUrl": "https://storage.yandexcloud.net/services-static/services-external-console-ru-ru.json",
+      "center": "https://center.yandex.cloud",
+      "centerAcl": "https://center.yandex.cloud/organization/acl",
+      "centerSecurity": "https://center.yandex.cloud/security",
+      "public": "https://datalens.yandex",
+      "datalensDocs": "https://yandex.cloud/ru/docs/datalens",
+      "objectStorageDocs": "https://yandex.cloud/docs/storage/quickstart",
+      "docs": "https://yandex.cloud/ru/docs",
+      "privacyPolicy": "https://yandex.ru/legal/confidential",
+      "termsOfUse": "https://yandex.ru/legal/cloud_termsofuse",
+      "illustrationStorage": "https://storage.yandexcloud.net/console-static/illustrations-v2",
+      "supportEmail": "cloud@support.yandex.ru",
+      "telegramBotLink": "https://t.me/YandexCloudNotify_bot",
+      "mdbFQDNDomain": "mdb.yandexcloud.net",
+      "s3CrossOriginHost": "https://yastatic.net",
+      "videoHost": "https://runtime.video.cloud.yandex.net"
+    },
+    "features": {
+      "AsideHeaderEnabled": true,
+      "AuthUpdateWithTimeout": false,
+      "BackofficeBanner": true,
+      "BackofficePromo": true,
+      "BillingEnabled": true,
+      "BillingEnabledTrials": false,
+      "BillingSSOEnabled": true,
+      "BrandingEnabled": true,
+      "ChartModeling": true,
+      "ChartEditorDeveloperModeCheck": false,
+      "chartkitAlerts": false,
+      "CloudMode": true,
+      "CollectionsAccessEnabled": true,
+      "CollectionsE2ETestsMode": false,
+      "CollectionsEnabled": true,
+      "Comments": false,
+      "ConnectionBasedControl": false,
+      "CopyEntriesToWorkbook": true,
+      "DashBoardSupportDescription": true,
+      "DashBoardWidgetParamsStrictValidation": true,
+      "DashServerMigrationEnable": false,
+      "DashServerValidationEnable": false,
+      "DatasetsRLS": true,
+      "DisableFnAndHtml": true,
+      "DisableFolders": true,
+      "DisableIgnoreSafeChartWarningParam": false,
+      "EditorTabNewNaming": false,
+      "EditorTabNewOrder": false,
+      "EmbeddingUsageLimitCheckEnabled": false,
+      "EmbeddingUsageLimitEnabled": true,
+      "EnableAIAssistant": true,
+      "EnableAsyncChartDataExport": true,
+      "EnableAsyncXlsxChartDataExport": true,
+      "EnableAutocreateDataset": true,
+      "BillingNewBindCardEnabled": false,
+      "EnableBlogPage": false,
+      "EnableCelebrationTheme": false,
+      "EnableChartEditor": true,
+      "EnableChartEditorControlsJSTab": false,
+      "EnableChartEditorDocs": false,
+      "EnableChartEditorMetaTab": true,
+      "EnableChartEditorSharedTab": false,
+      "EnableCollectionVisitorCreatorRoles": false,
+      "EnableCommonChartDashSettings": false,
+      "EnableCustomDashMargins": false,
+      "EnableCustomMonitoring": false,
+      "EnableDashAutoFocus": false,
+      "EnableDashChartStat": true,
+      "EnableDashColorPickersByTheme": false,
+      "EnableDashCustomMargins": false,
+      "EnableDashFloatingAIButton": true,
+      "EnableDashTabsGoldenset": true,
+      "EnableDashTabsHidden": true,
+      "EnableDatasetEarlyInvalidationCache": false,
+      "EnableDefaultTemplateDeployInWorkbooks": true,
+      "EnableDownloadEnterprisePage": true,
+      "EnableEmbedAccessDialog": false,
+      "EnableEmbedsInDialogShare": false,
+      "EnableEntryMenuItemShare": true,
+      "EnableExportSettings": true,
+      "EnableExportWorkbookFile": true,
+      "EnableExtendedLicensingApi": false,
+      "EnableDashMailing": true,
+      "EnableFooter": false,
+      "EnableIntranetMarkdownPlugins": false,
+      "EnableMobileFixedHeader": true,
+      "EnableMobileHeader": true,
+      "EnableNeuroWidget": false,
+      "EnableNewAccessDialog": false,
+      "EnableNewDashSettings": false,
+      "EnableNewExternalDashMailing": true,
+      "EnableNewServiceSettings": true,
+      "EnableOnboarding": false,
+      "EnablePrivateSaIam": false,
+      "EnablePrivateSaIamInProxy": true,
+      "EnablePrivateTVM": false,
+      "EnableWebSqlSection": false,
+      "EnablePromoJsSdk": false,
+      "EnablePublishEntry": true,
+      "EnableRLSV2": false,
+      "EnableRecentsTracking": false,
+      "EnableReportsUndoRedo": false,
+      "EnableSaveAsEditorScript": false,
+      "EnableSaveAsImage": true,
+      "EnableServerlessEditor": false,
+      "EnableSharedEntries": false,
+      "EnableSimplePromptInput": false,
+      "EnableSupportChats": true,
+      "EnableTenantManagement": true,
+      "EnableUpdatingDsSettingsByAction": false,
+      "EnableVisualQualityAnalyst": false,
+      "EntryMenuItemAccess": true,
+      "EntryMenuItemCopy": true,
+      "EntryMenuItemMove": true,
+      "ExternalSelectors": false,
+      "FetchDocumentation": true,
+      "FieldEditorDocSection": true,
+      "ForceDeepSeekEnable": false,
+      "ForceTVM": false,
+      "FunnelChart": false,
+      "GravityChartsForBarYAndScatter": false,
+      "GravityChartsForLineAreaAndBarX": false,
+      "GravityChartsForPieAndTreemap": false,
+      "HelpCenterEnabled": true,
+      "HideMultitenant": false,
+      "HolidaysOnChart": false,
+      "InnerDocumentation": false,
+      "LastLoginEnabled": true,
+      "MailWelcomeNewUser": true,
+      "MassRemoveCollectionsWorkbooks": true,
+      "MenuItemsFlatView": false,
+      "MigrateToWorkbookEnabled": true,
+      "MigrateToWorkbookInSettingsEnabled": true,
+      "HideMultiDatasets": false,
+      "MultipleColorsInVisualization": false,
+      "NewTableWidgetForCE": true,
+      "NoJsonFn": true,
+      "Presentations": false,
+      "QLMonitoring": true,
+      "QLPrometheus": true,
+      "QlAutoExecuteMonitoringChart": false,
+      "ReadOnlyMode": false,
+      "RevisionsListNoLimit": false,
+      "SecureEmbeddingEnabled": true,
+      "ShouldCheckEditorAccess": true,
+      "ShowChartsEngineDebugInfo": true,
+      "ShowCreateEntryWithMenu": true,
+      "ShowEditorPreviewLabel": true,
+      "ShowEditorSecretButton": false,
+      "ShowInspectorDetails": true,
+      "ShowPromoIntro": true,
+      "ShowUnsafeChartIcon": false,
+      "StartInDataLens": true,
+      "StatusIllustrations": true,
+      "SupportReportEnabled": true,
+      "SwitchInstanceBetweenOrg": true,
+      "toggleTheme": false,
+      "UnpublishEnabled": true,
+      "UsDynamicMasterToken": false,
+      "UsDynamicMasterTokenInProxy": false,
+      "UseChartsEngineLogin": false,
+      "UseChartsEngineResponseConfig": false,
+      "UseComponentHeader": false,
+      "UseConfigurableChartkit": false,
+      "UsePublicDistincts": false,
+      "UseSourceAlias": false,
+      "UseYqlFolderKey": false,
+      "UsersInvitation": true,
+      "XlsxChartExportEnabled": true,
+      "XlsxFilesEnabled": true
+    },
+    "dynamicFeatures": {
+      "Presentations": true,
+      "EnableChartEditor": true,
+      "EnableChartEditorMetaTab": true,
+      "ChartEditorDeveloperModeCheck": false,
+      "ShowChartsEngineDebugInfo": true,
+      "BillingEnabledTrials": true,
+      "EnableDownloadEnterprisePage": true,
+      "EnableAIAssistant": true,
+      "RedirectAllToNewDomain": true,
+      "RedirectEmbedsToNewDomain": false,
+      "CheckAIAssistantTenantFeature": false,
+      "EnableAsyncXlsxChartDataExport": true,
+      "EnablePrivateSaIam": true,
+      "EnableNewServiceSettings": true,
+      "ChartModeling": true,
+      "ForceDeepSeekEnable": true,
+      "EnableCommonChartDashSettings": true,
+      "EnableDashFloatingAIButton": true,
+      "EnableDashTabsGoldenset": true,
+      "EnableDashTabsHidden": true,
+      "EnableSimplePromptInput": true,
+      "GravityChartsForLineAreaAndBarX": true,
+      "GravityChartsForBarYAndScatter": true,
+      "GravityChartsForPieAndTreemap": true,
+      "HideEmbedToken": true,
+      "EnableNewExternalDashMailing": true,
+      "EnableDashMailing": true,
+      "EnableOnboarding": true
+    },
+    "meta": {
+      "x-request-id": "f77e1a8b-5b61-4938-8a67-97c8fd980814",
+      "traceparent": "00-0000000000000000d14238995a543270-952a15260520d07c-01",
+      "uber-trace-id": "0000000000000000d14238995a543270:952a15260520d07c:0:01"
+    },
+    "push": {
+      "host": "push.yandex.ru",
+      "service": "yacloud",
+      "client": "web"
+    },
+    "metricaCounters": [
+      {
+        "id": 50514217,
+        "name": "main"
+      },
+      {
+        "id": 51465824,
+        "name": "cross"
+      }
+    ],
+    "organizationId": "",
+    "projectId": "",
+    "organizations": [],
+    "ymapApiKey": "7f51d969-76b4-47d9-808e-71618ba2cbae",
+    "errorCounter": {
+      "settings": {
+        "reqid": "f77e1a8b-5b61-4938-8a67-97c8fd980814",
+        "project": "datalens-external-ui",
+        "env": "production",
+        "version": "1.182.3",
+        "region": 10000
+      }
+    },
+    "allowLanguages": [
+      "ru",
+      "en"
+    ],
+    "langRegion": "ru",
+    "envSettings": {
+      "backoffice": {
+        "enableConstructorTypeSelection": true,
+        "enableBlogServices": true
+      },
+      "common": {
+        "computeOsLoginEnabled": true,
+        "securityDeckAvailable": true,
+        "techPreviewFlowEnabled": false,
+        "communicationsCheckEnabled": true,
+        "hiringPromoEnabled": true,
+        "iamAddYandexUsersEnabled": true,
+        "alphaAccessEnabled": true,
+        "newYearMoodAllowed": true,
+        "userSettings": [
+          "subscriptions.mail",
+          "subscriptions.phone",
+          "subscriptions.telegram",
+          "subscriptions.yandexMessenger",
+          "subscriptions.webhookOutgoing",
+          "subscriptions.tech",
+          "subscriptions.security",
+          "subscriptions.alerting",
+          "subscriptions.billing",
+          "subscriptions.feature",
+          "subscriptions.event",
+          "subscriptions.promo",
+          "appearance.theme",
+          "appearance.contrast",
+          "appearance.promoBanner",
+          "region.language",
+          "region.timezone",
+          "region.dateformat",
+          "region.dateseparator",
+          "region.timeformat"
+        ],
+        "navigationHeaderDecoration": true,
+        "contactDialogSettings": {
+          "inputPhoneImageUrl": "https://storage.yandexcloud.net/console-static/settings-images/input-phone.svg",
+          "phoneVerifyCodeImageUrl": "https://storage.yandexcloud.net/console-static/settings-images/phone-verify-code.svg",
+          "inputEmailImageUrl": "https://storage.yandexcloud.net/console-static/settings-images/input-email.svg",
+          "emailVerifyCodeImageUrl": "https://storage.yandexcloud.net/console-static/settings-images/email-verify-code.svg",
+          "telegramCodeImageUrl": "https://storage.yandexcloud.net/console-static/settings-images/telegram-code.svg",
+          "webhookOutgoingCodeImageUrl": "https://storage.yandexcloud.net/console-static/settings-images/webhook-outgoing-code.svg"
+        },
+        "billing": {
+          "paymentWhitelist": [
+            "https://trust.sourcecraft.dev",
+            "https://trust.datalens.ru",
+            "https://trust.yandex.cloud",
+            "https://trust.yandex.ru",
+            "https://trust-test.sourcecraft.dev",
+            "https://trust-test.datalens.ru",
+            "https://trust-test.yandex.cloud",
+            "https://trust-test.yandex.ru"
+          ]
+        },
+        "addUsersToOrgActionsEnabled": [
+          "invite-users",
+          "add-federation-users"
+        ]
+      },
+      "auth": {
+        "isYandexLoginEnabled": true
+      }
+    },
+    "iamResources": {
+      "collection": {
+        "roles": {
+          "admin": "datalens.collections.admin",
+          "editor": "datalens.collections.editor",
+          "viewer": "datalens.collections.viewer",
+          "limitedViewer": "datalens.collections.limitedViewer",
+          "entryBindingCreator": "datalens.collections.entryBindingCreator",
+          "limitedEntryBindingCreator": "datalens.collections.limitedEntryBindingCreator"
+        }
+      },
+      "workbook": {
+        "roles": {
+          "admin": "datalens.workbooks.admin",
+          "editor": "datalens.workbooks.editor",
+          "viewer": "datalens.workbooks.viewer",
+          "limitedViewer": "datalens.workbooks.limitedViewer"
+        }
+      },
+      "sharedEntry": {
+        "roles": {
+          "admin": "datalens.sharedEntries.admin",
+          "editor": "datalens.sharedEntries.editor",
+          "viewer": "datalens.sharedEntries.viewer",
+          "limitedViewer": "datalens.sharedEntries.limitedViewer",
+          "entryBindingCreator": "datalens.sharedEntries.entryBindingCreator",
+          "limitedEntryBindingCreator": "datalens.sharedEntries.limitedEntryBindingCreator"
+        }
+      }
+    },
+    "chartkitSettings": {
+      "highcharts": {
+        "enabled": true
+      },
+      "yandexMap": {
+        "enabled": true,
+        "token": "7f51d969-76b4-47d9-808e-71618ba2cbae"
+      }
+    },
+    "defaultColorPaletteId": "default20",
+    "apiPrefix": "/embeds/api",
+    "aiConfig": {
+      "defaultModel": "foundationModels-qwen",
+      "availableModels": [
+        "foundationModels-qwen",
+        "foundationModels-deepseek-v32"
+      ]
+    },
+    "embed": true,
+    "tenantSettings": {
+      "defaultColorPaletteId": "",
+      "prohibitionPublication": false,
+      "prohibitionExportWorkbooks": false,
+      "dataExportProhibited": false,
+      "aiAssistantProhibited": false
+    },
+    "commonDynamicFeatures": {
+      "billingNewBindCardEnabled": false,
+      "billingServiceInstanceDetailsEnabled": true,
+      "billingSyncFiltersStateToURL": true,
+      "celebrationTheme": false,
+      "growUpPricesBannerEnabled": true,
+      "incidentsSubscriptionEnabled": true
+    },
+    "demoWorkbook": {
+      "title": "Demo Dashboard",
+      "templateName": "demo_dash"
+    },
+    "logoKeys": {
+      "mobile": "logo-ya-dl-cloud-xs",
+      "desktop": "logo-ya-dl-cloud"
+    },
+    "collectionsAcl": "iam",
+    "defaultStyles": {
+      "favicons": [
+        {
+          "href": "/cloud-favicon.png",
+          "sizes": "48x48",
+          "type": "image/png"
+        },
+        {
+          "href": "/cloud-favicon.svg",
+          "rel": "icon",
+          "type": "image/svg+xml"
+        },
+        {
+          "href": "/cloud-favicon.ico",
+          "rel": "icon",
+          "type": "image/icon",
+          "sizes": "any"
+        }
+      ]
+    }
+  }
+}

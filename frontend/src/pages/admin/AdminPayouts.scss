@@ -1,0 +1,159 @@
+@use '../../styles/variables' as *;
+@use '../../styles/cabinet' as *;
+
+.admin-payouts {
+  @include cab-container;
+
+  > h1 {
+    margin: 0;
+    font-family: $font-secondary;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: $white;
+  }
+
+  &__msg {
+    @include cab-message;
+  }
+
+  &__section {
+    @include cab-panel;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    > h2 {
+      margin: 0;
+      font-family: $font-secondary;
+      font-size: 17px;
+      font-weight: 700;
+      color: $white;
+    }
+  }
+
+  &__table-wrap {
+    @include cab-table-wrapper;
+
+    table {
+      @include cab-table;
+      min-width: 820px;
+    }
+  }
+
+  &__artist {
+    display: block;
+    color: $white;
+    font-weight: 500;
+  }
+
+  &__email {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  &__amount {
+    color: $white;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  &__requisites {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 13px;
+
+    span:first-child { color: $white; font-weight: 500; }
+    span { color: rgba(255, 255, 255, 0.5); }
+  }
+
+  &__status {
+    &--pending { @include cab-status-pending; }
+    &--approved { @include cab-status-success; }
+    &--rejected { @include cab-status-error; }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__btn {
+    @include cab-row-btn;
+
+    &--approve {
+      border-color: rgba(118, 245, 166, 0.32);
+      color: #8ef19b;
+      background: rgba(118, 245, 166, 0.06);
+
+      &:hover {
+        background: rgba(118, 245, 166, 0.14);
+        border-color: rgba(118, 245, 166, 0.5);
+      }
+    }
+
+    &--reject {
+      border-color: rgba(255, 107, 107, 0.3);
+      color: #ff8b8b;
+      background: rgba(255, 107, 107, 0.06);
+
+      &:hover {
+        background: rgba(255, 107, 107, 0.14);
+        border-color: rgba(255, 107, 107, 0.5);
+      }
+    }
+  }
+
+  // === Модалка ===
+  &__overlay { @include cab-modal-overlay; }
+  &__modal {
+    @include cab-modal;
+
+    > h2 {
+      margin: 0;
+      font-family: $font-secondary;
+      font-size: 18px;
+      font-weight: 700;
+      color: $white;
+    }
+  }
+
+  &__modal-field { @include cab-field; }
+  &__modal-error { @include cab-error; }
+
+  &__modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+
+    button {
+      @include cab-btn-ghost;
+
+      &.admin-payouts__btn--approve {
+        border-color: rgba(118, 245, 166, 0.4);
+        color: #8ef19b;
+        background: rgba(118, 245, 166, 0.06);
+
+        &:hover:not(:disabled) {
+          background: rgba(118, 245, 166, 0.14);
+          border-color: rgba(118, 245, 166, 0.6);
+        }
+      }
+
+      &.admin-payouts__btn--reject {
+        border-color: rgba(255, 107, 107, 0.4);
+        color: #ff8b8b;
+        background: rgba(255, 107, 107, 0.06);
+
+        &:hover:not(:disabled) {
+          background: rgba(255, 107, 107, 0.14);
+          border-color: rgba(255, 107, 107, 0.6);
+        }
+      }
+    }
+  }
+}

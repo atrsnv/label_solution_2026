@@ -17,8 +17,7 @@ function publicUser(u) {
     email: u.email,
     name: u.name,
     role: u.role,
-    labelShare: u.labelShare,
-    balance: u.balance,
+    labelShare: u.labelShare ?? 10,
   };
 }
 
@@ -26,13 +25,13 @@ async function login(req, res, next) {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(400).json({ error: 'email and password are required' });
+      return res.status(400).json({ error: 'Укажи email и пароль' });
     }
     const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
-    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+    if (!user) return res.status(401).json({ error: 'Пользователь с таким email не найден' });
 
     const ok = await bcrypt.compare(password, user.password);
-    if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
+    if (!ok) return res.status(401).json({ error: 'Неверный пароль' });
 
     const token = signToken(user);
     res.json({ token, user: publicUser(user) });
@@ -46,18 +45,18 @@ async function registerByInvite(req, res, next) {
   try {
     const { token, name, password } = req.body;
     if (!token || !name || !password) {
-      return res.status(400).json({ error: 'token, name and password are required' });
+      return res.status(400).json({ error: 'Укажи инвайт-токен, имя и пароль' });
     }
     const invite = await prisma.invite.findUnique({ where: { token } });
     if (!invite || invite.used || invite.expiresAt < new Date()) {
-      return res.status(400).json({ error: 'Invalid or expired invite' });
+      return res.status(400).json({ error: 'Инвайт недействителен или уже использован' });
     }
 
     const email = (req.body.email || invite.email || '').toLowerCase();
-    if (!email) return res.status(400).json({ error: 'email is required' });
+    if (!email) return res.status(400).json({ error: 'Укажи email' });
 
     const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) return res.status(409).json({ error: 'Email already registered' });
+    if (existing) return res.status(409).json({ error: 'Этот email уже зарегистрирован' });
 
     const hashed = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
@@ -66,7 +65,6 @@ async function registerByInvite(req, res, next) {
         password: hashed,
         name,
         role: 'ARTIST',
-        labelShare: config.defaultLabelShare,
       },
     });
 

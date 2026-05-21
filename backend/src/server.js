@@ -6,6 +6,8 @@ const authRoutes = require('./routes/auth.routes');
 const adminRoutes = require('./routes/admin.routes');
 const artistRoutes = require('./routes/artist.routes');
 const trackRoutes = require('./routes/tracks.routes');
+const datalensRoutes = require('./routes/datalens.routes');
+const publicRoutes = require('./routes/public.routes');
 
 const app = express();
 
@@ -21,6 +23,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/artist', artistRoutes);
 app.use('/api/tracks', trackRoutes);
+app.use('/api/datalens', datalensRoutes);
+app.use('/api/public', publicRoutes);
 
 // 404
 app.use((req, res) => {
